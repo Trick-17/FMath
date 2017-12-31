@@ -31,7 +31,7 @@ The library provides convenience `typedef`s:
 Usage Examples
 --------------
 
-Reductions
+### Reductions
 ```C++
 // Single field reduction
 FMath::VectorField vf(N);
@@ -43,31 +43,36 @@ sf1 *= sf2;
 FMath::scalar dot = sf1.sum();
 ```
 
-Operators
+### Operators
 ```C++
 FMath::VectorField vf1(N), vf2(N);
 FMath::ScalarField sf1(N);
+
 // This will produce an expression object, due to auto
 auto vf = vf1 + vf2*vf2;
 // This will actually evaluate the expression
 FMath::ScalarField sf_result = vf.dot(vf1);
 ```
 
-Convenience math functions
+### Convenience math functions
 ```C++
 FMath::VectorField vf1(N), vf2(N);
+
 // Element-wise dot product
 FMath::ScalarField sf_dot = vf1.dot(vf2);
 // Element-wise cross product
 FMath::VectorField vf_cross = vf1.cross(vf2);
 ```
 
-Other convenience functions
+### Other convenience functions
 ```C++
 FMath::ScalarField sf(N);
 FMath::VectorField vf(N);
-// Interpret a scalar field as N-dimensional vector
+
+// Copy a scalar field to a new N-dimensional vector
 FMath::VectorX vec1 = sf.asVectorX();
-// Interpret a vector field as 3N-dimensional vector
+// Copy a vector field to a new 3N-dimensional vector
 FMath::VectorX vec2 = vf.asVectorX();
+// Interpret a scalar field as a N-dimensional vector without copying
+Eigen::Ref<VectorX> vecRef = sf.asVectorXRef();
 ```
