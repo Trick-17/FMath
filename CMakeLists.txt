@@ -81,30 +81,36 @@ endif( )
 
 
 ######### Where to search for library headers #########################
-include_directories( ${PROJECT_SOURCE_DIR} )
-include_directories( ${PROJECT_SOURCE_DIR}/FMath )
-include_directories( ${PROJECT_SOURCE_DIR}/thirdparty )
+set( FMATH_INCLUDE_DIRS 
+     ${PROJECT_SOURCE_DIR} 
+     ${PROJECT_SOURCE_DIR}/FMath 
+     ${PROJECT_SOURCE_DIR}/thirdparty )
+include_directories( ${FMATH_INCLUDE_DIRS} )
 #######################################################################
 
 
-# ######### Declare File groups #########################################
-# ### Header Gropus
-# set( HEADER_FMATH_ROOT )
-# set( HEADER_FMATH )
-# ### Source Groups
-# set( SOURCE_FMATH_ROOT )
-# set( SOURCE_FMATH )
-# #######################################################################
+######### Declare File groups #########################################
+set( HEADER_FMATH_ROOT 
+     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/Field.hpp )
+set( HEADER_FMATH_DETAIL 
+     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Field.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/FieldFunctions.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/FieldExpression.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Using.hpp )
+#######################################################################
 
 
-# ######### IDE Folders #################################################
-# ### Folder include
-# source_group( "include" FILES ${HEADER_FMATH_ROOT} )
-# source_group( "include\\FMath" FILES ${HEADER_BACKENDS} )
-# ### Folder src
-# source_group( "src" FILES  ${SOURCE_FMATH_ROOT} ) #${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-# source_group( "src\\FMath" FILES ${SOURCE_BACKENDS} )
-# #######################################################################
+######### IDE Folders #################################################
+add_library( ${META_PROJECT_NAME} INTERFACE)
+target_include_directories( ${META_PROJECT_NAME} INTERFACE ${FMATH_INCLUDE_DIRS} )
+target_sources( ${META_PROJECT_NAME} INTERFACE ${HEADER_FMATH_ROOT} ${HEADER_FMATH_DETAIL} )
+
+add_custom_target( ${META_PROJECT_NAME}_Headers SOURCES ${HEADER_FMATH_ROOT} ${HEADER_FMATH_DETAIL} )
+
+### IDE folders
+source_group( ""       FILES ${HEADER_FMATH_ROOT}   )
+source_group( "detail" FILES ${HEADER_FMATH_DETAIL} )
+#######################################################################
 
 
 ######### Test executable ###############################################
