@@ -43,31 +43,39 @@ namespace FMath::detail
             assign(_container, other);
         }
 
+        // If the container is a std::vector, data can be retrieved as a pointer
+        T* data() const
+        { 
+            static_assert(decltype(Container) == decltype(std::vector<T>),
+                "data() is only available for evaluated Fields, not Expressions");
+            return &_container[0];
+        }
+
         // Size of underlying container
-        std::size_t size()                          const { return _container.size(); }
+        std::size_t size()                         const { return _container.size(); }
 
         // Index operators
         T           operator[](const std::size_t i) const { return _container[i]; }
         T&          operator[](const std::size_t i)       { return _container[i]; }
 
         // Returns the underlying data
-        const Container& data()                     const { return _container; }
-        Container&       data()                           { return _container; }
+        const Container& contents()                 const { return _container; }
+        Container&       contents()                       { return _container; }
 
         // Element-wise dot-product between vector-fields, yielding a scalar-field
-        template <typename R2>
-        Field<scalar> dot(const Field<Vector3,R2> & field);
+        template <typename Container2>
+        Field<scalar> dot(const Field<Vector3,Container2> & field);
 
         // Element-wise dot-product between a vector-field and a vector, yielding a scalar-field
-        template <typename R2>
+        template <typename Container2>
         Field<scalar> dot(const Vector3 & vec);
 
         // Element-wise cross-product between vector-fields, yielding a vector-field
-        template <typename R2>
-        Field<Vector3> cross(const Field<Vector3,R2> & field);
+        template <typename Container2>
+        Field<Vector3> cross(const Field<Vector3,Container2> & field);
 
         // Element-wise cross-product between a vector-field and a vector, yielding a vector-field
-        template <typename R2>
+        template <typename Container2>
         Field<Vector3> cross(const Vector3 & vec);
     };
 }
