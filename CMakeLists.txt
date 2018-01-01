@@ -2,9 +2,10 @@ MESSAGE( STATUS ">> ------------------------------------------------------------
 MESSAGE( STATUS ">> ----------------------- FMath -------------------------------------- <<" )
 
 ######### CMake Version ###############################################
-cmake_minimum_required( VERSION 3.1 FATAL_ERROR )
+cmake_minimum_required( VERSION 3.10 FATAL_ERROR )
 ### We need at least C++17
 set( CMAKE_CXX_STANDARD 17 )
+set( CMAKE_CXX_STANDARD_REQUIRED ON )
 ### Distinction between Clang and AppleClang
 cmake_policy( SET CMP0025 NEW )
 #######################################################################
@@ -129,7 +130,7 @@ endmacro( add_framework_test testName testSrc )
 enable_testing( )
 
 ### Create tests
-add_framework_test( test1 test/test1.cpp )
+add_framework_test( scalarfield test/scalarfield.cpp )
 #######################################################################
 
 
