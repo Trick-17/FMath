@@ -6,8 +6,8 @@ FMath: Field Math library
 
 **Requirements:**
 - C++17
-- (later maybe OpenMP 4.5)
-- (later maybe CUDA 8)
+- OpenMP 4.5 (optional)
+- (later maybe a CUDA version which supports C++17 features)
 
 
 General Ideas
@@ -21,11 +21,38 @@ Expression templates ensure that mathematical operations are used efficiently,
 avoiding temporaries.
 
 The library provides convenience `typedef`s:
-- `FMath::scalar`      = `double` or `float`, depending on your choice
+- `FMath::scalar`      = default is `double`, can be defined differently by `FMATH_SCALAR_TYPE`
 - `FMath::ScalarField` = `FMath::Field<FMath::scalar>`
 - `FMath::Vector3`     = `Eigen::Vector3<FMath::scalar>`
 - `FMath::VectorX`     = `Eigen::VectorX<FMath::scalar>`
 - `FMath::VectorField` = `FMath::Field<FMath::Vector3>`
+
+
+Parallelisation
+---------------
+
+Since almost all operations on `Field`s, defined in this library, are either trivially parallelizable
+or typical reductions, both CPU and GPU could and should be used to speed up operations.
+
+OpenMP 4.5 can easily be used to parallelize everything on CPU and also supports usage of devices.
+However, due to the lack of unified memory abstractions, GPU parallelisation does not yet come as
+naturally.
+
+
+Incorporation into your project
+-------------------------------
+
+Adding this library to your project should be trivial.
+You can do it manually:
+- copy the `FMath` folder into your directory of choice
+- copy the `thirdparty/Eigen` folder or provide your own
+- make sure the `FMath` and `Eigen` folders are in your include-directories
+- optionally define `FMATH_SCALAR_TYPE`
+- optionally add OpenMP compiler flags to activate parallelisation
+
+or using CMake:
+- copy the entire repository folder into your directory of choice
+- TODO...
 
 
 Usage Examples
@@ -71,14 +98,14 @@ FMath::ScalarField sf(N);
 FMath::VectorField vf(N);
 
 // Copy a scalar field to a new N-dimensional vector
-FMath::VectorX vec1 = sf.asVectorX();
+FMath::VectorX vec1 = sf.asRef<VectorX>();
 // Copy a vector field to a new 3N-dimensional vector
-FMath::VectorX vec2 = vf.asVectorX();
+FMath::VectorX vec2 = vf.asRef<VectorX>();
 
 // Interpret a scalar field as a N-dimensional vector without copying
-Eigen::Ref<VectorX> vecRef1 = sf.asVectorXRef();
+Eigen::Ref<VectorX> vecRef1 = sf.asRef<VectorX>();
 // Interpret a vector field as a 3N-dimensional vector without copying
-Eigen::Ref<VectorX> vecRef2 = vf.asVectorXRef();
+Eigen::Ref<VectorX> vecRef2 = vf.asRef<VectorX>();
 ```
 
 Extracting an indexed set from a `Field`
