@@ -1,6 +1,6 @@
 #include <catch.hpp>
 
-#include <FMath/Field.hpp>
+#include <FMath/Core>
 
 using FMath::Field;
 using FMath::scalar;

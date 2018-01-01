@@ -91,8 +91,9 @@ include_directories( ${FMATH_INCLUDE_DIRS} )
 
 ######### Declare File groups #########################################
 set( HEADER_FMATH_ROOT 
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/Field.hpp )
+     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/Core )
 set( HEADER_FMATH_DETAIL 
+     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Convenience.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Field.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/FieldFunctions.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/FieldExpression.hpp
@@ -138,6 +139,7 @@ enable_testing( )
 ### Create tests
 add_framework_test( scalarfield test/scalarfield.cpp )
 add_framework_test( vectorfield test/vectorfield.cpp )
+add_framework_test( transform   test/transform.cpp   )
 #######################################################################
 
 

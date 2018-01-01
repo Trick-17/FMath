@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Eigen/Dense>
+
 namespace FMath::detail
 {
     // Assignment function to evaluate container_from into container_to

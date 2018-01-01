@@ -3,7 +3,7 @@
 #include <cassert>
 #include <vector>
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 #include <detail/Using.hpp>
 
@@ -33,20 +33,20 @@ namespace FMath::detail
         Field& operator= (const Field<T2, R2>& other)
         {
             assert(size() == other.size());
-            assign(_container, other);
+            this->assign(_container, other);
             return *this;
         }
         // A Field can be constructed such as to force its evaluation.
         template <typename T2, typename R2>
         Field(Field<T2, R2> const& other) : _container(other.size())
         {
-            assign(_container, other);
+            this->assign(_container, other);
         }
 
         // If the container is a std::vector, data can be retrieved as a pointer
-        T* data() const
+        T* data()
         { 
-            static_assert(decltype(Container) == decltype(std::vector<T>),
+            static_assert(std::is_same_v<Container, std::vector<T>>,
                 "data() is only available for evaluated Fields, not Expressions");
             return &_container[0];
         }
@@ -61,6 +61,20 @@ namespace FMath::detail
         // Returns the underlying data
         const Container& contents()                 const { return _container; }
         Container&       contents()                       { return _container; }
+
+
+        // Re-interpretation as a reference to an Eigen::VectorX
+        template <typename RefT>
+        Eigen::Ref<RefT> asRef()
+        {
+            // Field<Vector3> to VectorX of size 3*N
+            if constexpr (std::is_same_v<T, Vector3>)
+                return Eigen::Ref<RefT>( Eigen::Map<RefT>(this->_container[0].data(), 3*this->size()) );
+            // Field<scalar> etc. to VectorX of size N
+            else
+                return Eigen::Ref<RefT>( Eigen::Map<RefT>(this->data(), this->size()) );
+        }
+
 
         // Element-wise dot-product between vector-fields, yielding a scalar-field
         template <typename Container2>
@@ -79,6 +93,3 @@ namespace FMath::detail
         Field<Vector3> cross(const Vector3 & vec);
     };
 }
-
-#include <detail/FieldFunctions.hpp>
-#include <detail/FieldExpression.hpp>

@@ -60,6 +60,8 @@ Usage Examples
 
 ### Reductions
 ```C++
+#include <FMath/Core>
+
 // Single field reduction
 FMath::VectorField vf(N);
 FMath::scalar mean = vf.mean();
@@ -72,6 +74,8 @@ FMath::scalar dot = sf1.sum();
 
 ### Operators
 ```C++
+#include <FMath/Core>
+
 FMath::VectorField vf1(N), vf2(N);
 FMath::ScalarField sf1(N);
 
@@ -83,6 +87,8 @@ FMath::ScalarField sf_result = vf.dot(vf1);
 
 ### Convenience math functions
 ```C++
+#include <FMath/Core>
+
 FMath::VectorField vf1(N), vf2(N);
 
 // Element-wise dot product
@@ -94,6 +100,8 @@ FMath::VectorField vf_cross = vf1.cross(vf2);
 ### Other convenience functions
 Copying or re-interpreting a `Field` as an `Eigen::VectorX`
 ```C++
+#include <FMath/Core>
+
 FMath::ScalarField sf(N);
 FMath::VectorField vf(N);
 
@@ -110,6 +118,8 @@ Eigen::Ref<VectorX> vecRef2 = vf.asRef<VectorX>();
 
 Extracting an indexed set from a `Field`
 ```C++
+#include <FMath/Core>
+
 // A Field of size N1 and an index list of size N2<N1
 FMath::ScalarField sf(N1);
 FMath::IntField    index_list(N2);
