@@ -9,14 +9,14 @@
 
 namespace FMath::detail
 {
-    // Field
-    // template<typename T, typename Alloc = std::allocator<T> >
-    // using Field       = std::vector<T, Alloc>;
-    
     template<typename T, typename Container = std::vector<T>>
     class Field
     {
         Container _container;
+        
+        // Assignment function to expressly evaluate an expression
+        template <typename Container2>
+        void assign(Container & container_to, const Container2 & container_from);
 
     public:
         // Field with initial size
@@ -33,18 +33,14 @@ namespace FMath::detail
         Field& operator= (const Field<T2, R2>& other)
         {
             assert(size() == other.size());
-            for (std::size_t i = 0; i < _container.size(); ++i)
-                _container[i] = other[i];
+            assign(_container, other);
             return *this;
         }
         // A Field can be constructed such as to force its evaluation.
         template <typename T2, typename R2>
-        Field(Field<T2, R2> const& field) : _container(field.size())
+        Field(Field<T2, R2> const& other) : _container(other.size())
         {
-            for (size_t i = 0; i != field.size(); ++i)
-            {
-                _container[i] = field[i];
-            }
+            assign(_container, other);
         }
 
         // Size of underlying container
@@ -58,62 +54,23 @@ namespace FMath::detail
         const Container& data()                     const { return _container; }
         Container&       data()                           { return _container; }
 
+        // Element-wise dot-product between vector-fields, yielding a scalar-field
         template <typename R2>
-        Field<scalar> dot(const Field<Vector3,R2> & field)
-        {
-            static_assert(std::is_same_v<T, Vector3>, "Field<...>.dot(...) is only available on Field<Vector3>");
+        Field<scalar> dot(const Field<Vector3,R2> & field);
 
-            // TODO: move this into a new expression
-            assert(size() == field.size());
-            Field<scalar> ret(size());
-            for (size_t i = 0; i != size(); ++i)
-            {
-                ret[i] = _container[i].dot(field[i]);
-            }
-            return ret;
-        }
+        // Element-wise dot-product between a vector-field and a vector, yielding a scalar-field
         template <typename R2>
-        Field<scalar> dot(const Vector3 & vec)
-        {
-            static_assert(std::is_same_v<T, Vector3>, "Field<...>.dot(...) is only available on Field<Vector3>");
+        Field<scalar> dot(const Vector3 & vec);
 
-            // TODO: move this into a new expression
-            Field<scalar> ret(size());
-            for (size_t i = 0; i != size(); ++i)
-            {
-                ret[i] = _container[i].dot(vec);
-            }
-            return ret;
-        }
+        // Element-wise cross-product between vector-fields, yielding a vector-field
+        template <typename R2>
+        Field<Vector3> cross(const Field<Vector3,R2> & field);
 
+        // Element-wise cross-product between a vector-field and a vector, yielding a vector-field
         template <typename R2>
-        Field<Vector3> cross(const Field<Vector3,R2> & field)
-        {
-            static_assert(std::is_same_v<T, Vector3>, "Field<...>.cross(...) is only available on Field<Vector3>");
-            
-            // TODO: move this into a new expression
-            assert(size() == field.size());
-            Field<Vector3> ret(size());
-            for (size_t i = 0; i != size(); ++i)
-            {
-                ret[i] = _container[i].cross(field[i]);
-            }
-            return ret;
-        }
-        template <typename R2>
-        Field<Vector3> cross(const Vector3 & vec)
-        {
-            static_assert(std::is_same_v<T, Vector3>, "Field<...>.cross(...) is only available on Field<Vector3>");
-            
-            // TODO: move this into a new expression
-            Field<Vector3> ret(size());
-            for (size_t i = 0; i != size(); ++i)
-            {
-                ret[i] = _container[i].cross(vec);
-            }
-            return ret;
-        }
+        Field<Vector3> cross(const Vector3 & vec);
     };
-
 }
+
+#include <detail/FieldFunctions.hpp>
 #include <detail/FieldExpression.hpp>
