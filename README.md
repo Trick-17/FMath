@@ -65,6 +65,7 @@ FMath::VectorField vf_cross = vf1.cross(vf2);
 ```
 
 ### Other convenience functions
+Copying or re-interpreting a `Field` as an `Eigen::VectorX`
 ```C++
 FMath::ScalarField sf(N);
 FMath::VectorField vf(N);
@@ -73,6 +74,22 @@ FMath::VectorField vf(N);
 FMath::VectorX vec1 = sf.asVectorX();
 // Copy a vector field to a new 3N-dimensional vector
 FMath::VectorX vec2 = vf.asVectorX();
+
 // Interpret a scalar field as a N-dimensional vector without copying
-Eigen::Ref<VectorX> vecRef = sf.asVectorXRef();
+Eigen::Ref<VectorX> vecRef1 = sf.asVectorXRef();
+// Interpret a vector field as a 3N-dimensional vector without copying
+Eigen::Ref<VectorX> vecRef2 = vf.asVectorXRef();
+```
+
+Extracting an indexed set from a `Field`
+```C++
+// A Field of size N1 and an index list of size N2<N1
+FMath::ScalarField sf(N1);
+FMath::IntField    index_list(N2);
+
+// Set the indices of the Field entries you wish to extract...
+// (this can also be used to re-order a Field)
+
+// Extract the indexed set
+FMath::ScalarField sf_subset = sf.subset(index_list);
 ```
