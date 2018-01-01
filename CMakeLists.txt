@@ -131,6 +131,7 @@ enable_testing( )
 
 ### Create tests
 add_framework_test( scalarfield test/scalarfield.cpp )
+add_framework_test( vectorfield test/vectorfield.cpp )
 #######################################################################
 
 

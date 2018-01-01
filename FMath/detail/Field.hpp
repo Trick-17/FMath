@@ -3,6 +3,8 @@
 #include <cassert>
 #include <vector>
 
+#include <Eigen/Dense>
+
 #include <detail/Using.hpp>
 
 namespace FMath::detail
