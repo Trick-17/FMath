@@ -55,7 +55,7 @@ SET( FMATH_USE_OPENMP        OFF  CACHE BOOL "Use OpenMP to speed up certain par
 #     find_package( CUDA REQUIRED )
 #     add_definitions( -DUSE_CUDA )
 #   # set (CUDA_PROPAGATE_HOST_FLAGS ON)
-#   # --std=c++11 flag may be necessary, but it is propagated from global flags...
+#   # --std=c++17 flag may be necessary, but it is propagated from global flags...
 #   # if it appears twice, for some reason the compilation breaks
 #     set( CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -arch=sm_60 --expt-relaxed-constexpr" )
 # endif()
@@ -122,7 +122,7 @@ macro( add_framework_test testName testSrc )
     add_executable( ${testName} test/main.cpp ${testSrc} )
     # Properties
     set_property( TARGET ${testName} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${TEST_RUNTIME_OUTPUT_DIRECTORY} )
-    set_property( TARGET ${testName} PROPERTY CXX_STANDARD 11 )
+    set_property( TARGET ${testName} PROPERTY CXX_STANDARD 17 )
     set_property( TARGET ${testName} PROPERTY CXX_STANDARD_REQUIRED ON )
     set_property( TARGET ${testName} PROPERTY CXX_EXTENSIONS OFF )
     # Include Directories
