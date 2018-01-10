@@ -14,6 +14,126 @@ namespace FMath::detail
             container_to[i] = container_from[i];
     }
 
+    //////// Reductions /////////////////////////////////////////////
+
+    // Definition for OpenMP reduction operation using Vector3's
+    #pragma omp declare reduction (+: Vector3: omp_out=omp_out+omp_in)\
+        initializer(omp_priv=Vector3::Zero())
+
+    template<typename T, typename Container>
+    T Field<T, Container>::sum()
+    {
+        T ret;
+        if constexpr (std::is_same_v<T, Vector3>)
+            ret.setZero();
+        else
+            ret = 0;
+
+        #pragma omp parallel for reduction(+:ret)
+        for (std::size_t i = 0; i < size(); ++i)
+            ret += _container[i];
+        return ret;
+    }
+
+    template<typename T, typename Container>
+    T Field<T, Container>::mean()
+    {
+        return sum()/static_cast<long double>(size());
+    }
+
+    template<typename T, typename Container>
+    scalar Field<T, Container>::norm()
+    {
+        // TODO
+        return 0;
+    }
+
+    template<typename T, typename Container>
+    T Field<T, Container>::min()
+    {
+        T ret;
+        if constexpr (std::is_same_v<T, Vector3>)
+            ret.setZero();
+        else
+            ret = 0;
+        
+        // TODO
+
+        return ret;
+    }
+
+    template<typename T, typename Container>
+    T Field<T, Container>::max()
+    {
+        T ret;
+        if constexpr (std::is_same_v<T, Vector3>)
+            ret.setZero();
+        else
+            ret = 0;
+        
+        // TODO
+        
+        return ret;
+    }
+
+    template<typename T, typename Container>
+    std::pair<T, T> Field<T, Container>::minmax()
+    {
+        T ret_min, ret_max;
+        if constexpr (std::is_same_v<T, Vector3>)
+        {
+            ret_min.setZero();
+            ret_max.setZero();
+        }
+        else
+        {
+            ret_min = 0;
+            ret_max = 0;
+        }
+        
+        // TODO
+        
+        return {ret_min, ret_max};
+    }
+
+    template<typename T, typename Container>
+    std::pair<scalar, scalar> Field<T, Container>::minmax_component()
+    {
+        static_assert(std::is_same_v<T, Vector3>, "Field<...>.minmax_component() is only available on Field<Vector3>");
+
+        scalar ret_min, ret_max;
+        ret_min = 0;
+        ret_max = 0;
+        
+        // TODO
+        
+        return {ret_min, ret_max};
+    }
+
+    //////// Operations on self /////////////////////////////////////
+
+    template<typename T, typename Container>
+    void Field<T, Container>::normalize()
+    {
+        if (norm() > 0)
+        {
+            // TODO
+        }
+    }
+
+    // template<typename T, typename Container>
+    // Field Field<T, Container>::normalized()
+    // {
+    //     if (norm() > 0)
+    //     {
+    //         // TODO: move this into a new expression
+    //     }
+    //     else
+    //         // TODO: create trivial expression
+    // }
+
+    //////// Operations with others /////////////////////////////////
+
     template<typename T, typename Container> template <typename R2>
     Field<scalar> Field<T, Container>::dot(const Field<Vector3,R2> & field)
     {
