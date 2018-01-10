@@ -93,30 +93,37 @@ namespace FMath::detail
         // Returns the average over all entries of the Field
         T mean();
 
-        // TODO: reconsider what this function should do
-        // If T is a scalar type, this will return the minimum value.
-        // If T is a non-scalar type this will return the element with minimum norm
-        T min();
+        // This is only valid for scalar contents
+        // This will return the minimum value.
+        scalar min();
 
-        // TODO: reconsider what this function should do
-        // If T is a scalar type, this will return the maximum value.
-        // If T is a non-scalar type this will return the element with maximum norm
-        T max();
+        // This is only valid for scalar contents
+        // This will return themaximum value.
+        scalar max();
 
-        // TODO: reconsider what this function should do
-        // If T is a scalar type, this will return the minimum and maximum value.
-        // If T is a non-scalar type this will return the elements with minimum and maximum norm
-        std::pair<T, T> minmax();
+        // This is only valid for scalar contents
+        // This will return the minimum and maximum value.
+        std::pair<scalar, scalar> minmax();
 
         //////// VectorField Operations on self /////////////////////////
 
-        // TODO: reconsider what this function should do
+        // This is only valid for Vector3 contents
+        // Returns the minium and maximum value of the components of all vectorfield entries
+        scalar min_component();
+
+        // This is only valid for Vector3 contents
+        // Returns the minium and maximum value of the components of all vectorfield entries
+        scalar max_component();
+
         // This is only valid for Vector3 contents
         // Returns the minium and maximum value of the components of all vectorfield entries
         std::pair<scalar, scalar> minmax_component();
 
         // For a VectorField, this returns a Field of the Vector3 norms
         Field<scalar> norm();
+
+        // For a VectorField, this returns a Field of the squared Vector3 norms
+        Field<scalar> squaredNorm();
 
         // Normalizes the Vector3 entries of a VectorField to norm 1.
         // If a norm is zero, nothing is done.

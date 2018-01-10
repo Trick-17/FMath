@@ -42,65 +42,102 @@ namespace FMath::detail
     }
 
     template<typename T, typename Container>
-    T Field<T, Container>::min()
+    scalar Field<T, Container>::min()
     {
-        T ret;
-        if constexpr (std::is_same_v<T, Vector3>)
-            ret.setZero();
-        else
-            ret = 0;
-        
-        // TODO
+        static_assert(std::is_arithmetic<T>(), "Field<...>.min() is only available on Field<scalar>");
 
-        return ret;
+        scalar minval =  std::numeric_limits<scalar>::max();
+
+#       pragma omp parallel for reduction(min: minval)
+        for (unsigned int i = 0; i < size(); ++i)
+            if (_container[i] < minval) minval = _container[i];
+
+        return minval;
     }
 
     template<typename T, typename Container>
-    T Field<T, Container>::max()
+    scalar Field<T, Container>::max()
     {
-        T ret;
-        if constexpr (std::is_same_v<T, Vector3>)
-            ret.setZero();
-        else
-            ret = 0;
-        
-        // TODO
-        
-        return ret;
+        static_assert(std::is_arithmetic<T>(), "Field<...>.max() is only available on Field<scalar>");
+
+        scalar maxval = -std::numeric_limits<scalar>::max();
+
+#       pragma omp parallel for reduction(max : maxval)
+        for (unsigned int i = 0; i < size(); ++i)
+        {
+            if (_container[i] > maxval) maxval = _container[i];
+        }
+
+        return maxval;
     }
 
     template<typename T, typename Container>
-    std::pair<T, T> Field<T, Container>::minmax()
+    std::pair<scalar, scalar> Field<T, Container>::minmax()
     {
-        T ret_min, ret_max;
-        if constexpr (std::is_same_v<T, Vector3>)
+        static_assert(std::is_arithmetic<T>(), "Field<...>.minmax() is only available on Field<scalar>");
+
+        scalar minval =  std::numeric_limits<scalar>::max();
+        scalar maxval = -std::numeric_limits<scalar>::max();
+
+#       pragma omp parallel for reduction(min: minval) reduction(max : maxval)
+        for (unsigned int i = 0; i < size(); ++i)
         {
-            ret_min.setZero();
-            ret_max.setZero();
+            if (_container[i] < minval) minval = _container[i];
+            if (_container[i] > maxval) maxval = _container[i];
         }
-        else
-        {
-            ret_min = 0;
-            ret_max = 0;
-        }
-        
-        // TODO
-        
-        return {ret_min, ret_max};
+
+        return {minval, maxval};
     }
 
+    template<typename T, typename Container>
+    scalar Field<T, Container>::min_component()
+    {
+        static_assert(std::is_same_v<T, Vector3>, "Field<...>.min_component() is only available on Field<Vector3>");
+
+        scalar minval =  std::numeric_limits<scalar>::max();
+
+#       pragma omp parallel for reduction(min: minval)
+        for (unsigned int i = 0; i < size(); ++i)
+            for (int dim = 0; dim < 3; ++dim)
+                if (_container[i][dim] < minval) minval = _container[i][dim];
+
+        return minval;
+    }
+
+    template<typename T, typename Container>
+    scalar Field<T, Container>::max_component()
+    {
+        static_assert(std::is_same_v<T, Vector3>, "Field<...>.max_component() is only available on Field<Vector3>");
+
+        scalar maxval = -std::numeric_limits<scalar>::max();
+
+#       pragma omp parallel for reduction(max : maxval)
+        for (unsigned int i = 0; i < size(); ++i)
+            for (int dim = 0; dim < 3; ++dim)
+                if (_container[i][dim] > maxval) maxval = _container[i][dim];
+
+        return maxval;
+    }
+    
     template<typename T, typename Container>
     std::pair<scalar, scalar> Field<T, Container>::minmax_component()
     {
         static_assert(std::is_same_v<T, Vector3>, "Field<...>.minmax_component() is only available on Field<Vector3>");
 
-        scalar ret_min, ret_max;
-        ret_min = 0;
-        ret_max = 0;
-        
-        // TODO
-        
-        return {ret_min, ret_max};
+        scalar minval =  std::numeric_limits<scalar>::max();
+        scalar maxval = -std::numeric_limits<scalar>::max();
+
+#       pragma omp parallel for reduction(min: minval) reduction(max : maxval)
+        for (unsigned int i = 0; i < size(); ++i)
+        {
+            for (int dim = 0; dim < 3; ++dim)
+            {
+                if (_container[i][dim] < minval) minval = _container[i][dim];
+                if (_container[i][dim] > maxval) maxval = _container[i][dim];
+            }
+        }
+
+        return {minval, maxval};
     }
 
     //////// VectorField Operations on self /////////////////////////
@@ -117,6 +154,21 @@ namespace FMath::detail
 #       pragma omp parallel for
         for (std::size_t i = 0; i < size(); ++i)
             ret[i] = _container[i].norm();
+
+        return ret;
+    }
+    
+    template<typename T, typename Container>
+    Field<scalar> Field<T, Container>::squaredNorm()
+    {
+        static_assert(std::is_same_v<T, Vector3>, "Field<...>.norm() is only available on Field<Vector3>");
+
+        // TODO: move this into a new expression
+        Field<scalar> ret(size());
+
+#       pragma omp parallel for
+        for (std::size_t i = 0; i < size(); ++i)
+            ret[i] = _container[i].squaredNorm();
 
         return ret;
     }
