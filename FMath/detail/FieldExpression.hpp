@@ -7,7 +7,7 @@
 namespace FMath::detail
 {
     // Elementwise Field + Field
-    template<typename T, typename Op1 , typename Op2>
+    template<typename T, typename Op1, typename Op2>
     class FieldFieldAdd
     {
         Op1 const& _op1;

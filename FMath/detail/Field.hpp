@@ -5,6 +5,7 @@
 
 #include <Eigen/Core>
 
+#include <detail/SubSet.hpp>
 #include <detail/Using.hpp>
 
 namespace FMath::detail
@@ -20,13 +21,16 @@ namespace FMath::detail
 
     public:
         // Field with initial size
-        Field(const std::size_t n) : _container(n){}
+        Field(const std::size_t n) : _container(n) {}
 
         // Field with initial size and value
-        Field(const std::size_t n, const T initialValue) : _container(n, initialValue){}
+        Field(const std::size_t n, const T initialValue) : _container(n, initialValue) {}
+
+        // Field via initializer list
+        Field(std::initializer_list<T> list) : _container(list) {}
 
         // Constructor for underlying container
-        Field(const Container& other) : _container(other){}
+        Field(const Container& other) : _container(other) {}
 
         // Assignment operator for Field of different type
         template<typename T2, typename R2>
@@ -91,5 +95,11 @@ namespace FMath::detail
         // Element-wise cross-product between a vector-field and a vector, yielding a vector-field
         template <typename Container2>
         Field<Vector3> cross(const Vector3 & vec);
+
+        // Extract a subset of a Field's values via a list of indices
+        Field<T, SubSet<T, Container>> operator[] (const std::vector<int> & indices)
+        {
+            return Field<T, SubSet<T, Container>>(SubSet<T, Container>(contents(), indices));
+        }
     };
 }

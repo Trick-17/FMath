@@ -97,6 +97,7 @@ set( HEADER_FMATH_DETAIL
      ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Field.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/FieldFunctions.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/FieldExpression.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/SubSet.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Using.hpp )
 #######################################################################
 
@@ -140,6 +141,7 @@ enable_testing( )
 add_framework_test( scalarfield test/scalarfield.cpp )
 add_framework_test( vectorfield test/vectorfield.cpp )
 add_framework_test( transform   test/transform.cpp   )
+add_framework_test( subset      test/subset.cpp   )
 #######################################################################
 
 
