@@ -94,11 +94,6 @@ namespace FMath::detail
         T mean();
 
         // TODO: reconsider what this function should do
-        // If T is a scalar type, this will return the N-dimensional norm
-        // If T is a non-scalar type this will return the 3N-dimensional norm
-        scalar norm();
-
-        // TODO: reconsider what this function should do
         // If T is a scalar type, this will return the minimum value.
         // If T is a non-scalar type this will return the element with minimum norm
         T min();
@@ -113,24 +108,25 @@ namespace FMath::detail
         // If T is a non-scalar type this will return the elements with minimum and maximum norm
         std::pair<T, T> minmax();
 
+        //////// VectorField Operations on self /////////////////////////
+
         // TODO: reconsider what this function should do
         // This is only valid for Vector3 contents
         // Returns the minium and maximum value of the components of all vectorfield entries
         std::pair<scalar, scalar> minmax_component();
 
-        //////// Operations on self /////////////////////////////////////
+        // For a VectorField, this returns a Field of the Vector3 norms
+        Field<scalar> norm();
 
-        // TODO: reconsider what this function should do
-        // Normalizes the field components to norm 1.
-        // If norm is zero, nothing is done.
+        // Normalizes the Vector3 entries of a VectorField to norm 1.
+        // If a norm is zero, nothing is done.
         void normalize();
 
-        // TODO: reconsider what this function should do
-        // Normalizes the field components to norm 1.
-        // If norm is zero, nothing is done.
-        Field normalized();
+        // Normalizes the Vector3 entries of a VectorField to norm 1.
+        // If a norm is zero, nothing is done.
+        Field<Vector3> normalized();
 
-        //////// Operations with others /////////////////////////////////
+        //////// VectorField Operations with others /////////////////////
 
         // Element-wise dot-product between vector-fields, yielding a scalar-field
         template <typename Container2>

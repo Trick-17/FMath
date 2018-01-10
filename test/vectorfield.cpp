@@ -18,6 +18,8 @@ TEST_CASE( "VectorField", "[VectorField]" )
     Field<scalar>  sf_res2 = vf1.dot(vf2) + sf1;
     Field<Vector3> vf_res1 = vf1 + vf2;
     Field<Vector3> vf_res2 = vf1 + vf1.cross(vf2);
+    Field<scalar>  sf_res3 = vf2.norm();
+    Field<Vector3> vf_res3 = vf2.normalized();
     
     // Check
     REQUIRE( sf_res2[0] == Approx( 2.5 ) );
@@ -27,4 +29,7 @@ TEST_CASE( "VectorField", "[VectorField]" )
 
     INFO( "vf result 2: " + std::to_string(vf_res2[0][0]) + " " + std::to_string(vf_res2[0][1]) + " " + std::to_string(vf_res2[0][2]) );
     REQUIRE( vf_res2[0].isApprox( Vector3{-0.5, 0, 1} ) );
+
+    REQUIRE( sf_res3[0] == Approx(0.5*std::sqrt(2)) );
+    REQUIRE( vf_res3[0][1] == Approx(0.5*std::sqrt(2)) );
 }

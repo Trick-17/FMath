@@ -42,13 +42,6 @@ namespace FMath::detail
     }
 
     template<typename T, typename Container>
-    scalar Field<T, Container>::norm()
-    {
-        // TODO
-        return 0;
-    }
-
-    template<typename T, typename Container>
     T Field<T, Container>::min()
     {
         T ret;
@@ -110,29 +103,50 @@ namespace FMath::detail
         return {ret_min, ret_max};
     }
 
-    //////// Operations on self /////////////////////////////////////
+    //////// VectorField Operations on self /////////////////////////
+
+    // For a VectorField, this returns a Field of the Vector3 norms
+    template<typename T, typename Container>
+    Field<scalar> Field<T, Container>::norm()
+    {
+        static_assert(std::is_same_v<T, Vector3>, "Field<...>.norm() is only available on Field<Vector3>");
+
+        // TODO: move this into a new expression
+        Field<scalar> ret(size());
+
+#       pragma omp parallel for
+        for (std::size_t i = 0; i < size(); ++i)
+            ret[i] = _container[i].norm();
+
+        return ret;
+    }
 
     template<typename T, typename Container>
     void Field<T, Container>::normalize()
     {
-        if (norm() > 0)
-        {
-            // TODO
-        }
+        static_assert(std::is_same_v<T, Vector3>, "Field<...>.normalize() is only available on Field<Vector3>");
+
+#       pragma omp parallel for
+        for (std::size_t i = 0; i < size(); ++i)
+            _container[i].normalize();
     }
 
-    // template<typename T, typename Container>
-    // Field Field<T, Container>::normalized()
-    // {
-    //     if (norm() > 0)
-    //     {
-    //         // TODO: move this into a new expression
-    //     }
-    //     else
-    //         // TODO: create trivial expression
-    // }
+    template<typename T, typename Container>
+    Field<Vector3> Field<T, Container>::normalized()
+    {
+        static_assert(std::is_same_v<T, Vector3>, "Field<...>.nonormalizedrm() is only available on Field<Vector3>");
 
-    //////// Operations with others /////////////////////////////////
+        // TODO: move this into a new expression
+        Field<Vector3> ret(size());
+
+#       pragma omp parallel for
+        for (std::size_t i = 0; i < size(); ++i)
+            ret[i] = _container[i].normalized();
+
+        return ret;
+    }
+
+    //////// VectorField Operations with others /////////////////////
 
     template<typename T, typename Container> template <typename R2>
     Field<scalar> Field<T, Container>::dot(const Field<Vector3,R2> & field)
