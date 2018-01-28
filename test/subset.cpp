@@ -33,3 +33,18 @@ TEST_CASE( "SubSet", "[SubSet]" )
     REQUIRE( sf2[2] == Approx( 6 ) );
     REQUIRE( sf2[4] == Approx( 8 ) );
 }
+
+TEST_CASE( "Slice", "[Slice]" )
+{
+    // Initialize
+    Field<scalar> sf1({1,2,3,4,5});
+    Field<scalar> sf2({1,2,3,4,5});
+    Field<scalar> sf3(5, 2);
+
+    // Operate
+    sf2[{0,2,4}] = sf1.slice();
+    // Check
+    REQUIRE( sf2[0] == Approx( 1 ) );
+    REQUIRE( sf2[2] == Approx( 2 ) );
+    REQUIRE( sf2[4] == Approx( 3 ) );
+}

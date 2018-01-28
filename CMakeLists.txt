@@ -145,8 +145,11 @@ set( HEADER_FMATH_DETAIL
      ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Convenience.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Field.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/FieldFunctions.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/FieldExpression.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/SubSet.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Operators.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Expression_Add.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Expression_Mult.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Expression_SubSet.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Expression_Slice.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Using.hpp )
 #######################################################################
 

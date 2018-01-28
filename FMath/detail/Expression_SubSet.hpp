@@ -6,13 +6,13 @@ namespace FMath::detail
 {
     // Elementwise element extraction via an index list
     template<typename T, typename Container>
-    class SubSet
+    class SubSetEx
     {
         Container & _container;
         std::vector<int> const& _indices;
 
     public:
-        SubSet(Container & container, const std::vector<int> & indices): _container(container), _indices(indices)
+        SubSetEx(Container & container, const std::vector<int> & indices): _container(container), _indices(indices)
         {
             assert(_container.size() >= _indices.size());
         }

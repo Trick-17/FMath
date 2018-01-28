@@ -5,7 +5,8 @@
 
 #include <Eigen/Core>
 
-#include <detail/SubSet.hpp>
+#include <detail/Expression_SubSet.hpp>
+#include <detail/Expression_Slice.hpp>
 #include <detail/Using.hpp>
 
 namespace FMath::detail
@@ -153,10 +154,16 @@ namespace FMath::detail
 
         //////// SubSet Extraction //////////////////////////////////////
 
+        // Extract a 1D slice of a Field
+        auto slice(int begin=0, std::optional<int> end={}, int stride=1)
+        {
+            return Field<T, SliceEx<T, Container>>(SliceEx<T, Container>(contents(), begin, end, stride));
+        }
+
         // Extract a subset of a Field's values via a list of indices
         auto operator[] (const std::vector<int> & indices)
         {
-            return Field<T, SubSet<T, Container>>(SubSet<T, Container>(contents(), indices));
+            return Field<T, SubSetEx<T, Container>>(SubSetEx<T, Container>(contents(), indices));
         }
     };
 }
