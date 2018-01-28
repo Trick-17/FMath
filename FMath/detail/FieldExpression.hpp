@@ -98,21 +98,21 @@ namespace FMath::detail
 
     // Function template for the + operator between two fields
     template<typename T, typename R1, typename R2>
-    Field<T, FieldFieldAdd<T, R1, R2>> operator+ (const Field<T, R1>& a, const Field<T, R2>& b)
+    auto operator+ (const Field<T, R1>& a, const Field<T, R2>& b)
     {
         return Field<T, FieldFieldAdd<T, R1, R2>>(FieldFieldAdd<T, R1, R2 >(a.contents(), b.contents()));
     }
 
     // Function templates for the + operator between an entity and a field
     template<typename T, typename R1, typename R2>
-    Field<T, EntityFieldAdd<T, R1, R2>> operator+ (const R1 & a, const Field<T, R2> & b)
+    auto operator+ (const R1 & a, const Field<T, R2> & b)
     {
         static_assert((std::is_arithmetic<R1>() && std::is_arithmetic<R1>()) || (!std::is_arithmetic<R1>() && !std::is_arithmetic<R1>()),
             "scalar + Field is only available using arithmetic types");
         return Field<T, EntityFieldAdd<T, R1, R2>>(EntityFieldAdd<T, R1, R2 >(a, b.contents()));
     }
     template<typename T, typename R1, typename R2>
-    Field<T, EntityFieldAdd<T, R1, R2>> operator+ (const Field<T, R2>& b, const R1 & a)
+    auto operator+ (const Field<T, R2>& b, const R1 & a)
     {
         static_assert((std::is_arithmetic<R1>() && std::is_arithmetic<R1>()) || (!std::is_arithmetic<R1>() && !std::is_arithmetic<R1>()),
             "scalar + Field is only available using arithmetic types");
@@ -121,21 +121,21 @@ namespace FMath::detail
 
     // Function template for the * operator between two fields
     template<typename T, typename R1, typename R2>
-    Field<T, FieldFieldMultiplication< T, R1, R2>> operator* (const Field<T, R1>& a, const Field<T, R2>& b)
+    auto operator* (const Field<T, R1>& a, const Field<T, R2>& b)
     {
         return Field<T, FieldFieldMultiplication<T, R1, R2>>(FieldFieldMultiplication<T, R1, R2 >(a.contents(), b.contents()));
     }
 
     // Function templates for the * operator between an entity and a field (symmetric)
     template<typename T, typename R1, typename R2>
-    Field<T, EntityFieldMultiplication<T, R1, R2>> operator* (const R1 & a, const Field<T, R2> & b)
+    auto operator* (const R1 & a, const Field<T, R2> & b)
     {
         static_assert((std::is_arithmetic<R1>() && std::is_arithmetic<R1>()) || (!std::is_arithmetic<R1>() && !std::is_arithmetic<R1>()),
             "scalar * Field is only available using arithmetic types");
         return Field<T, EntityFieldMultiplication<T, R1, R2>>(EntityFieldMultiplication<T, R1, R2>(a, b.contents()));
     }
     template<typename T, typename R1, typename R2>
-    Field<T, EntityFieldMultiplication<T, R1, R2>> operator* (const Field<T, R2> & b, const R1 & a)
+    auto operator* (const Field<T, R2> & b, const R1 & a)
     {
         static_assert((std::is_arithmetic<R1>() && std::is_arithmetic<R1>()) || (!std::is_arithmetic<R1>() && !std::is_arithmetic<R1>()),
             "Field * scalar is only available using arithmetic types");

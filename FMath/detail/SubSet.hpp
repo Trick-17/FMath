@@ -27,7 +27,7 @@ namespace FMath::detail
             return _container[_indices[i]];
         }
 
-        std::size_t size() const
+        auto size() const
         { 
             return _indices.size(); 
         }

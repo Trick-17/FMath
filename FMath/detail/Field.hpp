@@ -61,15 +61,15 @@ namespace FMath::detail
         }
 
         // Size of underlying container
-        std::size_t size()                         const { return _container.size(); }
+        auto size() const { return _container.size(); }
 
         // Index operators
-        T           operator[](const std::size_t i) const { return _container[i]; }
-        T&          operator[](const std::size_t i)       { return _container[i]; }
+        T  operator[](const std::size_t i) const { return _container[i]; }
+        T& operator[](const std::size_t i)       { return _container[i]; }
 
         // Returns the underlying data
-        const Container& contents()                 const { return _container; }
-        Container&       contents()                       { return _container; }
+        const Container& contents() const { return _container; }
+        Container&       contents()       { return _container; }
 
         //////// Transformation /////////////////////////////////////////
 
@@ -154,7 +154,7 @@ namespace FMath::detail
         //////// SubSet Extraction //////////////////////////////////////
 
         // Extract a subset of a Field's values via a list of indices
-        Field<T, SubSet<T, Container>> operator[] (const std::vector<int> & indices)
+        auto operator[] (const std::vector<int> & indices)
         {
             return Field<T, SubSet<T, Container>>(SubSet<T, Container>(contents(), indices));
         }
