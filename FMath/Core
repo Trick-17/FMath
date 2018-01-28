@@ -1,5 +1,6 @@
 #include <detail/Using.hpp>
 #include <detail/Field.hpp>
-#include <detail/FieldFunctions.hpp>
+#include <detail/FieldAssign.hpp>
+#include <detail/FieldReductions.hpp>
 #include <detail/Operators.hpp>
 #include <detail/Convenience.hpp>

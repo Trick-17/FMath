@@ -17,19 +17,16 @@ namespace FMath::detail
             assert(_op1.size() == _op2.size());
         }
 
+        auto size() const { return _op1.size(); }
+
         T operator[](const std::size_t i) const
         { 
-            return _op1[i] + _op2[i]; 
-        }
-
-        std::size_t size() const
-        { 
-            return _op1.size(); 
+            return _op1[i] + _op2[i];
         }
     };
 
     // Entity + Field
-    template<typename T, typename Op1 , typename Op2>
+    template<typename T, typename Op1, typename Op2>
     class EntityFieldAdd
     {
         Op1 const& _ent;
@@ -38,14 +35,11 @@ namespace FMath::detail
     public:
         EntityFieldAdd(Op1 const& ent, Op2 const& op2): _ent(ent), _op2(op2) {}
 
+        auto size() const { return _op2.size(); }
+
         T operator[](const std::size_t i) const
         { 
-            return _ent + _op2[i]; 
-        }
-
-        std::size_t size() const
-        { 
-            return _op2.size(); 
+            return _ent + _op2[i];
         }
     };
 }

@@ -5,7 +5,7 @@
 namespace FMath::detail
 {
     // Elementwise Field * Field
-    template< typename T, typename Op1 , typename Op2 >
+    template< typename T, typename Op1, typename Op2 >
     class FieldFieldMultiplication
     {
         Op1 const& _op1;
@@ -17,14 +17,11 @@ namespace FMath::detail
             assert(_op1.size() == _op2.size());
         }
 
+        auto size() const { return _op1.size(); }
+
         T operator[](const std::size_t i) const
         { 
-            return _op1[i] * _op2[i]; 
-        }
-
-        std::size_t size() const
-        { 
-            return _op1.size(); 
+            return _op1[i] * _op2[i];
         }
     };
 
@@ -38,14 +35,11 @@ namespace FMath::detail
     public:
         EntityFieldMultiplication(const Op1 & ent, const Op2 & a ): _ent(ent), _op2(a) {}
 
+        auto size() const { return _op2.size(); }
+
         T operator[](const std::size_t i) const
         { 
-            return _ent * _op2[i]; 
-        }
-
-        std::size_t size() const
-        { 
-            return _op2.size(); 
+            return _ent * _op2[i];
         }
     };
 }

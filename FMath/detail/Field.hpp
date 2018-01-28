@@ -7,6 +7,7 @@
 
 #include <detail/Expression_SubSet.hpp>
 #include <detail/Expression_Slice.hpp>
+#include <detail/Expression_Function.hpp>
 #include <detail/Using.hpp>
 
 namespace FMath::detail
@@ -16,12 +17,12 @@ namespace FMath::detail
     {
         Container _container;
         
-        // Assignment function to expressly evaluate an expression
+        // Assignment function which explicitly evaluates an expression
         template <typename Container2>
         void assign(Container & container_to, const Container2 & container_from);
 
     public:
-        //////// Constructors ///////////////////////////////////////////
+        ///////////// Constructors //////////////////////////////////////////////////////////
 
         // Field with initial size
         Field(const std::size_t n) : _container(n) {}
@@ -51,7 +52,7 @@ namespace FMath::detail
             this->assign(_container, other);
         }
 
-        //////// Basics /////////////////////////////////////////////////
+        ///////////// Basics ////////////////////////////////////////////////////////////////
 
         // If the container is a std::vector, data can be retrieved as a pointer
         T* data()
@@ -72,7 +73,7 @@ namespace FMath::detail
         const Container& contents() const { return _container; }
         Container&       contents()       { return _container; }
 
-        //////// Transformation /////////////////////////////////////////
+        ///////////// Transformation ////////////////////////////////////////////////////////
 
         // Re-interpretation as a reference to an Eigen::VectorX
         template <typename RefT>
@@ -86,7 +87,7 @@ namespace FMath::detail
                 return Eigen::Ref<RefT>( Eigen::Map<RefT>(this->data(), this->size()) );
         }
 
-        //////// Reductions /////////////////////////////////////////////
+        ///////////// Reductions ////////////////////////////////////////////////////////////
 
         // Returns the sum over all entries of the Field
         T sum();
@@ -106,8 +107,6 @@ namespace FMath::detail
         // This will return the minimum and maximum value.
         std::pair<scalar, scalar> minmax();
 
-        //////// VectorField Operations on self /////////////////////////
-
         // This is only valid for Vector3 contents
         // Returns the minium and maximum value of the components of all vectorfield entries
         scalar min_component();
@@ -120,39 +119,63 @@ namespace FMath::detail
         // Returns the minium and maximum value of the components of all vectorfield entries
         std::pair<scalar, scalar> minmax_component();
 
+        ///////////// VectorField Operations on self ////////////////////////////////////////
+
         // For a VectorField, this returns a Field of the Vector3 norms
-        Field<scalar> norm();
+        auto norm()
+        {
+            return Field<scalar, NormEx<T, Container>>(NormEx<T, Container>(contents()));
+        }
 
         // For a VectorField, this returns a Field of the squared Vector3 norms
-        Field<scalar> squaredNorm();
+        auto squaredNorm()
+        {
+            return Field<scalar, SquaredNormEx<T, Container>>(SquaredNormEx<T, Container>(contents()));
+        }
 
         // Normalizes the Vector3 entries of a VectorField to norm 1.
         // If a norm is zero, nothing is done.
-        void normalize();
+        void normalize()
+        {
+            return Field<T, NormalizeEx<T, Container>>(NormalizeEx<T, Container>(contents()));
+        }
 
         // Normalizes the Vector3 entries of a VectorField to norm 1.
         // If a norm is zero, nothing is done.
-        Field<Vector3> normalized();
+        auto normalized()
+        {
+            return Field<T, NormalizedEx<T, Container>>(NormalizedEx<T, Container>(contents()));
+        }
 
-        //////// VectorField Operations with others /////////////////////
+        ///////////// VectorField Operations with others ////////////////////////////////////
 
         // Element-wise dot-product between vector-fields, yielding a scalar-field
         template <typename Container2>
-        Field<scalar> dot(const Field<Vector3,Container2> & field);
+        auto dot(const Field<Vector3, Container2> & field)
+        {
+            return Field<scalar, FieldDotFieldEx<T, Container, Container2>>(FieldDotFieldEx<T, Container, Container2>(contents(), field.contents()));
+        }
 
         // Element-wise dot-product between a vector-field and a vector, yielding a scalar-field
-        template <typename Container2>
-        Field<scalar> dot(const Vector3 & vec);
+        auto dot(const Vector3 & vec)
+        {
+            return Field<scalar, VectorDotFieldEx<T, Container>>(VectorDotFieldEx<T, Container>(contents(), vec));
+        }
 
         // Element-wise cross-product between vector-fields, yielding a vector-field
         template <typename Container2>
-        Field<Vector3> cross(const Field<Vector3,Container2> & field);
+        auto cross(const Field<Vector3,Container2> & field)
+        {
+            return Field<Vector3, FieldCrossFieldEx<T, Container, Container2>>(FieldCrossFieldEx<T, Container, Container2>(contents(), field.contents()));
+        }
 
         // Element-wise cross-product between a vector-field and a vector, yielding a vector-field
-        template <typename Container2>
-        Field<Vector3> cross(const Vector3 & vec);
+        auto cross(const Vector3 & vec)
+        {
+            return Field<Vector3, VectorCrossFieldEx<T, Container>>(VectorCrossFieldEx<T, Container>(contents(), vec));
+        }
 
-        //////// SubSet Extraction //////////////////////////////////////
+        ///////////// SubSet Extraction /////////////////////////////////////////////////////
 
         // Extract a 1D slice of a Field
         auto slice(int begin=0, std::optional<int> end={}, int stride=1)

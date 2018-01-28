@@ -5,7 +5,7 @@
 namespace FMath::detail
 {
     // Elementwise element extraction via an index list
-    template<typename T, typename Container>
+    template< typename T, typename Container >
     class SubSetEx
     {
         Container & _container;
@@ -29,7 +29,7 @@ namespace FMath::detail
 
         auto size() const
         { 
-            return _indices.size(); 
+            return _indices.size();
         }
     };
 }
