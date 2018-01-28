@@ -11,6 +11,13 @@ cmake_policy( SET CMP0025 NEW )
 #######################################################################
 
 
+#######################################################################
+# SET( FMATH_USE_CUDA          OFF  CACHE BOOL "Use CUDA to speed up certain parts of the code." )
+SET( FMATH_USE_OPENMP        OFF  CACHE BOOL "Use OpenMP to speed up certain parts of the code." )
+SET( FMATH_TEST_COVERAGE     OFF  CACHE BOOL "Build FMath tests with coverage flags." )
+#######################################################################
+
+
 ### Set the cmake subdirectory
 # list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" )
 
@@ -47,12 +54,6 @@ set( FMATH_META_VERSION        "${META_VERSION}" PARENT_SCOPE )
 set( FMATH_META_NAME_VERSION   "${META_PROJECT_NAME} v${META_VERSION} (${META_VERSION_REVISION})" PARENT_SCOPE )
 ### Project Name
 project( ${META_PROJECT_NAME} VERSION ${META_VERSION} )
-#######################################################################
-
-
-#######################################################################
-# SET( FMATH_USE_CUDA          OFF  CACHE BOOL "Use CUDA to speed up certain parts of the code." )
-SET( FMATH_USE_OPENMP        OFF  CACHE BOOL "Use OpenMP to speed up certain parts of the code." )
 #######################################################################
 
 
@@ -126,6 +127,22 @@ elseif( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel" )
     set( FMATH_COMPILE_FLAGS "-Wall -Wextra -Wpedantic" )
     set( FMATH_LINK_FLAGS    "" )
 endif( )
+message( STATUS "FMath Compile Flags: ${FMATH_COMPILE_FLAGS}" )
+message( STATUS "FMath Link Flags:    ${FMATH_LINK_FLAGS}" )
+######################################################################
+
+
+######### Coverage Flags #############################################
+if( FMATH_TEST_COVERAGE )
+    set( FMATH_FLAGS_COVERAGE
+        ${CMAKE_CXX_FLAGS_DEBUG}
+        --coverage
+        -fno-inline
+        -fno-inline-small-functions
+        -fno-default-inline )
+    string(REPLACE ";" " " FMATH_FLAGS_COVERAGE "${FMATH_FLAGS_COVERAGE}")
+    message( STATUS "FMath Coverage Flags: ${FMATH_FLAGS_COVERAGE}" )
+endif( )
 ######################################################################
 
 
@@ -180,8 +197,8 @@ macro( add_framework_test testName testSrc )
     set_property( TARGET ${testName} PROPERTY CXX_STANDARD 17 )
     set_property( TARGET ${testName} PROPERTY CXX_STANDARD_REQUIRED ON )
     set_property( TARGET ${testName} PROPERTY CXX_EXTENSIONS OFF )
-    set_property( TARGET ${testName} PROPERTY COMPILE_FLAGS ${FMATH_COMPILE_FLAGS} )
-    set_property( TARGET ${testName} PROPERTY LINK_FLAGS    ${FMATH_LINK_FLAGS} )
+    set_property( TARGET ${testName} PROPERTY COMPILE_FLAGS "${FMATH_COMPILE_FLAGS} ${FMATH_FLAGS_COVERAGE}" )
+    set_property( TARGET ${testName} PROPERTY LINK_FLAGS    "${FMATH_LINK_FLAGS}    ${FMATH_FLAGS_COVERAGE}" )
     # Include Directories
     target_include_directories( ${testName} PRIVATE ${PROJECT_SOURCE_DIR}/test )
     # Add the test

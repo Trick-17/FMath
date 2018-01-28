@@ -1,0 +1,47 @@
+sudo: required
+dist: trusty
+language: cpp
+
+matrix:
+  include:
+    # OSX, normal test run
+    - os: osx
+      osx_image: xcode9.2
+      env: COVERAGE=false RUNTESTS=true COMPILER_C=gcc-7 COMPILER_CXX=g++-7 CMAKE_OPTIONS="-DFMATH_TEST_COVERAGE=OFF"
+    # OSX, coverage run
+    - os: osx
+      osx_image: xcode9.2
+      env: COVERAGE=true RUNTESTS=false COMPILER_C=gcc-7 COMPILER_CXX=g++-7 CMAKE_OPTIONS="-DFMATH_TEST_COVERAGE=ON"
+
+before_install:
+  - brew update
+  - brew install gcc || brew link --overwrite gcc
+  - brew install lcov
+
+install:
+  - export CC=${COMPILER_C} CXX=${COMPILER_CXX}
+  - export PATH=/usr/local/bin:$PATH
+  - ln -s /usr/local/Cellar/gcc/7.3.0/bin/gcov-7 /usr/local/bin/gcov
+  - export CMAKE_OPTIONS="${CMAKE_OPTIONS} -DCMAKE_C_COMPILER=${COMPILER_C} -DCMAKE_CXX_COMPILER=${COMPILER_CXX}"
+  - cd ${TRAVIS_BUILD_DIR}
+  - |
+    mkdir -p build
+    cd build
+    cmake ${CMAKE_OPTIONS} ..
+  - make -j4
+
+script:
+  # Run normal unit tests
+  - if [ "$RUNTESTS" == "true" ]; then ctest; fi
+
+  # Don't run coverage on branches other than master or develop
+  - if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_BRANCH" != "develop" ]; then COVERAGE=false; fi
+  - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then COVERAGE=false; fi
+
+  # Run C++ coverage report generation and upload to codecov
+  - if [ "$COVERAGE" == "true" ]; then lcov -c -i --no-external --directory . --base-directory ../FMath -o baseline.info; fi
+  - if [ "$COVERAGE" == "true" ]; then make test; fi
+  - if [ "$COVERAGE" == "true" ]; then lcov -c --no-external --directory . --base-directory ../FMath -o after_test.info; fi
+  - if [ "$COVERAGE" == "true" ]; then lcov -a baseline.info -a after_test.info -o total_test.info; fi
+  - if [ "$COVERAGE" == "true" ]; then lcov -r total_test.info \*thirdparty\* \*/test/\* -o coverage.info; fi
+  - if [ "$COVERAGE" == "true" ]; then bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"; fi

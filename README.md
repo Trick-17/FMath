@@ -4,8 +4,8 @@ FMath: Field Math library
 
 &nbsp;
 
-
-[![Documentation](http://fmath.readthedocs.io/en/latest/?badge=latest)](http://fmath.readthedocs.io/)
+[![Build Status](https://travis-ci.org/spirit-code/spirit.svg?branch=master)](https://travis-ci.org/trick-17/fmath)
+[![Documentation](https://readthedocs.org/projects/fmath/badge/?version=latest)](https://fmath.readthedocs.io)
 
 &nbsp;
 
