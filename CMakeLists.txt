@@ -15,6 +15,15 @@ cmake_policy( SET CMP0025 NEW )
 # list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" )
 
 
+### Set a default build type in case none is passed
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "Setting build type to 'Release' as none was specified.")
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+    # Set the possible values of build type for cmake-gui
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
+
 # ######### Get git revision ############################################
 # include( GetGitRevisionDescription )
 # get_git_head_revision( GIT_REFSPEC GIT_SHA1 )
@@ -36,11 +45,8 @@ set( META_VERSION              "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${ME
 ### Propagate version and name_version upwards
 set( FMATH_META_VERSION        "${META_VERSION}" PARENT_SCOPE )
 set( FMATH_META_NAME_VERSION   "${META_PROJECT_NAME} v${META_VERSION} (${META_VERSION_REVISION})" PARENT_SCOPE )
-#######################################################################
-
-
-######### Project Name ################################################
-project( ${META_PROJECT_NAME} VERSION ${FMATH_META_VERSION} )
+### Project Name
+project( ${META_PROJECT_NAME} VERSION ${META_VERSION} )
 #######################################################################
 
 
@@ -66,8 +72,8 @@ SET( FMATH_USE_OPENMP        OFF  CACHE BOOL "Use OpenMP to speed up certain par
 if( FMATH_USE_OPENMP )
     include( FindOpenMP )
     if( OPENMP_FOUND )
-        set( CMAKE_C_FLAGS          "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
-        set( CMAKE_CXX_FLAGS        "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
+        set( CMAKE_C_FLAGS          "${CMAKE_C_FLAGS}          ${OpenMP_C_FLAGS}" )
+        set( CMAKE_CXX_FLAGS        "${CMAKE_CXX_FLAGS}        ${OpenMP_CXX_FLAGS}" )
         set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}" )
         message( STATUS ">> OpenMP found." )
         message( STATUS ">> OpenMP C Flags:          ${OpenMP_C_FLAGS}" )
@@ -78,6 +84,49 @@ if( FMATH_USE_OPENMP )
     endif( OPENMP_FOUND )
 endif( )
 #######################################################################
+
+
+######### Extra flags for Eigen #######################################
+SET(CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE}        -DEIGEN_NO_DEBUG -DEIGEN_FAST_MATH=0")
+SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -DEIGEN_FAST_MATH=0")
+SET(CMAKE_CXX_FLAGS_DEBUG          "${CMAKE_CXX_FLAGS_DEBUG}          -DEIGEN_FAST_MATH=0")
+#######################################################################
+
+
+######## Compiler-specific flags #####################################
+### GNU Compiler Collection - gcc
+if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" )
+    ### Require at least gcc 7.0
+    if( CMAKE_CXX_COMPILER_VERSION VERSION_LESS 7 )
+        message( FATAL_ERROR "GCC version must be at least 7!" )
+    endif( )
+    ### Compile and Link Flags (we deactivate -Wint-in-bool-context because of Eigen)
+    set( FMATH_COMPILE_FLAGS "-Wall -Wextra -Wpedantic -Wno-int-in-bool-context" )
+    set( FMATH_LINK_FLAGS    "" )
+    ### We deactivate -Wunknown-pragmas in case OpenMP is not used
+    if( NOT FMATH_USE_OPENMP )
+        set( FMATH_COMPILE_FLAGS "${FMATH_COMPILE_FLAGS} -Wno-unknown-pragmas" )
+    endif( )
+
+### Apple Clang
+elseif( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" )
+    ### Compile and Link Flags
+    set( FMATH_COMPILE_FLAGS "-Wall -Wextra -Wpedantic" )
+    set( FMATH_LINK_FLAGS    "" )
+
+### Microsoft Visual Compiler - msvc
+elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
+    ### Compile and Link Flags
+    set( FMATH_COMPILE_FLAGS "-DNOMINMAX" )
+    set( FMATH_LINK_FLAGS    "" )
+
+### Intel Compiler - icc
+elseif( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel" )
+    ### Compile and Link Flags
+    set( FMATH_COMPILE_FLAGS "-Wall -Wextra -Wpedantic" )
+    set( FMATH_LINK_FLAGS    "" )
+endif( )
+######################################################################
 
 
 ######### Where to search for library headers #########################
@@ -126,6 +175,8 @@ macro( add_framework_test testName testSrc )
     set_property( TARGET ${testName} PROPERTY CXX_STANDARD 17 )
     set_property( TARGET ${testName} PROPERTY CXX_STANDARD_REQUIRED ON )
     set_property( TARGET ${testName} PROPERTY CXX_EXTENSIONS OFF )
+    set_property( TARGET ${testName} PROPERTY COMPILE_FLAGS ${FMATH_COMPILE_FLAGS} )
+    set_property( TARGET ${testName} PROPERTY LINK_FLAGS    ${FMATH_LINK_FLAGS} )
     # Include Directories
     target_include_directories( ${testName} PRIVATE ${PROJECT_SOURCE_DIR}/test )
     # Add the test
