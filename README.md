@@ -5,6 +5,7 @@ FMath: Field Math library
 &nbsp;
 
 [![Build Status](https://travis-ci.org/spirit-code/spirit.svg?branch=master)](https://travis-ci.org/trick-17/fmath)
+[![Coverage Status](https://codecov.io/gh/trick-17/fmath/branch/master/graph/badge.svg)](https://codecov.io/gh/trick-17/fmath/branch/master)
 [![Documentation](https://readthedocs.org/projects/fmath/badge/?version=latest)](https://fmath.readthedocs.io)
 
 &nbsp;
