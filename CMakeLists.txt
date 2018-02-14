@@ -1,6 +1,7 @@
 MESSAGE( STATUS ">> -------------------------------------------------------------------- <<" )
 MESSAGE( STATUS ">> ----------------------- FMath -------------------------------------- <<" )
 
+
 ######### CMake Version ###############################################
 cmake_minimum_required( VERSION 3.10 FATAL_ERROR )
 ### We need at least C++17
@@ -148,8 +149,8 @@ endif( )
 
 ######### Where to search for library headers #########################
 set( FMATH_INCLUDE_DIRS 
-     ${PROJECT_SOURCE_DIR} 
-     ${PROJECT_SOURCE_DIR}/FMath 
+     ${PROJECT_SOURCE_DIR}/include
+     ${PROJECT_SOURCE_DIR}/include/FMath
      ${PROJECT_SOURCE_DIR}/thirdparty )
 include_directories( ${FMATH_INCLUDE_DIRS} )
 #######################################################################
@@ -157,19 +158,19 @@ include_directories( ${FMATH_INCLUDE_DIRS} )
 
 ######### Declare File groups #########################################
 set( HEADER_FMATH_ROOT 
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/Core )
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/Core )
 set( HEADER_FMATH_DETAIL 
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Convenience.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Field.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/FieldAssign.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/FieldReductions.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Operators.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Expression_Add.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Expression_Mult.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Expression_Function.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Expression_SubSet.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Expression_Slice.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/FMath/detail/Using.hpp )
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Convenience.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Field.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/FieldAssign.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/FieldReductions.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Operators.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Expression_Add.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Expression_Mult.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Expression_Function.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Expression_SubSet.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Expression_Slice.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Using.hpp )
 #######################################################################
 
 
@@ -216,6 +217,11 @@ add_framework_test( vectorfield test/vectorfield.cpp )
 add_framework_test( transform   test/transform.cpp   )
 add_framework_test( reductions  test/reductions.cpp  )
 add_framework_test( subset      test/subset.cpp      )
+#######################################################################
+
+
+######### Conan #######################################################
+configure_file(conanfile.py.in ${CMAKE_CURRENT_SOURCE_DIR}/conanfile.py @ONLY)
 #######################################################################
 
 

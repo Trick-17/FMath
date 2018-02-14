@@ -10,6 +10,9 @@ Testing/*
 !build/.gitkeep
 !output/.gitkeep
 
+### Generated Files ###
+conanfile.py
+
 ### Executables and Libraries ###
 run
 

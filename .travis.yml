@@ -2,20 +2,25 @@ sudo: required
 dist: trusty
 language: cpp
 
+env:
+  global:
+    - secure: "Ed4BsVRAxyGGkAPVQ/CXW7bMjV9ynu8Ce7XhSqh5ccnUxBNNio1X2dnM9EsZF2zSkup4ucNTpCTDcd2Y9nnVcBq4QexN7HheWxGsCl+RD7VVUTt6w2LUh3tUZuJOo1Ox8D0Csxy2Dz4A0zPvl/XqSxKyQicgS/fh87AX3UE2CayrUQ3xzAISF9xf/RKwS0yuLXjhJmjdSq4c2xrpWxm3zuAsSIlyGngq1UPLj1i2jaDQTt4yZN+bNVDdpdCjTkD55WiQVrD+76X+WTJqsdN+mCfN8IoBa5t6U7QS8mcIPHlyHTQB6935Fh+cCScj603u6Y7+7IYa5MLyFsr7jaHqrQLtCkjSzPswApUfoM9Uwadc37BA3/G1iTdJrgF2DlT61eCStykjaBPWr1bloNY7iW1kTsBvLBEv/QPocxVUBYOHF+Rzbn7gKbNk9FwdKJ97Nd2MtZh+rmBoyVchNmzXu6guYkalbgoTbylud6udub9o4dtp5r1k1fylf7yCfgo2aCPhVxe7fuVt5GvqdGVPU2GrSlYeHLs00nIp0GAZfYgd3qKU09Xt4FnIjRAhsMCFi/sJBZHOP6wmOVvIXf0SX12LSxB3oaKTsD5v374PXpV/i9Ja1o6WhEnYHK1YIxObf5DRd2fso8Guy+lI0W5D5QKeJUr1SuOv/v8ICxJXlgo="
+    - secure: "Mh2r79b5XRlb6MlnmrAoS9NLSGYHu+bh2MpNY2xuOildKkNSY3GBC6ZA9Y/ifhk/FOvOhCyNHyknTAqEwKHNg4r0dOoY+U+1hrpVPqpK4tM0vHjuBM6IHsdyfTdwfVesypa0LB3u2V3EMCCVurFq0+NgC4bsW1mJcxVWVdBKvmwryPcDlPfgPXF5x8ylOgmuuaSwaFdQPJ9hSjYKFvptyewSXBYWtZsGgHAGWzbJHcuGJ2m93LsfpMQZmh6tD69xBSWcC2Fex2zxCh/UnGr6LGqdyEy/JM1jhEO9qgQZxCI9onx8ULYeH2FJlyoH9fyULHkKqhp1zEdasCtcEraJmc10tALg9I960Ggd6TU9tka/EsPaa2KX0My/8/ySECHMO6IoiE0JLx3z8pW/+qaGxOEAvLkjPbKMs0Qk+J0lGz7oKdtMt4Bl5MNomHCoh2Wr1rUPfxKSrg8fRF9YCqC2kToV0/L5YsMv8OOvAJfKZg+QHTKZlVVbJeMMjaoseQ5zW3I6at13vJgyZnT0822nMZYwdanSHCRIWJ0CqEoXr6HkOmRrKpbTPShY+Ni/x3ZHG2Mypsi7eC7wA1NLcTMerIhW/mZpwhiF3oy7xq5iZIn30XnaI+O9Yk3K3alCNZeKkcMohwhv2C9VtjsZpglkFeUoWruEJQ17OjsjmkfJZ98="
+
 matrix:
   include:
     # OSX, normal test run
     - os: osx
       osx_image: xcode9.2
-      env: COVERAGE=false RUNTESTS=true COMPILER_C=gcc-7 COMPILER_CXX=g++-7 CMAKE_OPTIONS="-DFMATH_TEST_COVERAGE=OFF"
+      env: COVERAGE=false RUNTESTS=true COMPILER_C=gcc-7 COMPILER_CXX=g++-7 CMAKE_OPTIONS="-DFMATH_TEST_COVERAGE=OFF" CONAN=true
     # OSX, coverage run
     - os: osx
       osx_image: xcode9.2
-      env: COVERAGE=true RUNTESTS=false COMPILER_C=gcc-7 COMPILER_CXX=g++-7 CMAKE_OPTIONS="-DFMATH_TEST_COVERAGE=ON"
+      env: COVERAGE=true RUNTESTS=false COMPILER_C=gcc-7 COMPILER_CXX=g++-7 CMAKE_OPTIONS="-DFMATH_TEST_COVERAGE=ON" CONAN=false
 
 before_install:
   - brew update
-  - brew install gcc || brew link --overwrite gcc
+  - brew install conan gcc || brew link --overwrite gcc
   - brew install lcov
 
 install:
@@ -39,9 +44,24 @@ script:
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then COVERAGE=false; fi
 
   # Run C++ coverage report generation and upload to codecov
-  - if [ "$COVERAGE" == "true" ]; then lcov -c -i --no-external --directory . --base-directory ../FMath -o baseline.info; fi
+  - if [ "$COVERAGE" == "true" ]; then lcov -c -i --no-external --directory . --base-directory ../include/FMath -o baseline.info; fi
   - if [ "$COVERAGE" == "true" ]; then make test; fi
-  - if [ "$COVERAGE" == "true" ]; then lcov -c --no-external --directory . --base-directory ../FMath -o after_test.info; fi
+  - if [ "$COVERAGE" == "true" ]; then lcov -c --no-external --directory . --base-directory ../include/FMath -o after_test.info; fi
   - if [ "$COVERAGE" == "true" ]; then lcov -a baseline.info -a after_test.info -o total_test.info; fi
   - if [ "$COVERAGE" == "true" ]; then lcov -r total_test.info \*thirdparty\* \*/test/\* -o coverage.info; fi
   - if [ "$COVERAGE" == "true" ]; then bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"; fi
+
+  # Create and upload a Conan package
+  - cd ${TRAVIS_BUILD_DIR}
+  - CONANCHANNEL=$TRAVIS_BRANCH
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then CONANCHANNEL=stable; fi
+  # Do not upload pull requests
+  - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then CONAN=false; fi
+  # Packaging
+  - if [ "$CONAN" == "true" ]; then conan export . $BINTRAYUSER/$CONANCHANNEL; fi
+  # Get the package name (as <package>/<version>@<user>/<channel>)
+  - PACKAGENAME=$(conan search | sed -n 3p)
+  # Upload
+  - if [ "$CONAN" == "true" ]; then conan remote add fmath https://api.bintray.com/conan/trick-17/fmath; fi
+  - if [ "$CONAN" == "true" ]; then conan user -p $BINTRAYAPIKEY -r fmath $BINTRAYUSER; fi
+  - if [ "$CONAN" == "true" ]; then conan upload --all $PACKAGENAME -r fmath; fi

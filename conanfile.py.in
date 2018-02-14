@@ -1,0 +1,13 @@
+from conans import ConanFile
+
+class FMathConan(ConanFile):
+    name = "fmath"
+    version = "@META_VERSION@"
+    license = "MIT"
+    url = "@META_AUTHOR_DOMAIN@"
+    description = """@META_PROJECT_DESCRIPTION@"""
+    exports_sources = "include*", "LICENSE.txt"
+
+    def package(self):
+        self.copy("*", src="include", dst="include", keep_path=True)
+        self.copy("LICENSE.txt", dst="licenses", ignore_case=True, keep_path=False)
