@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-#include <detail/Field.hpp>
-#include <detail/Expression_Add.hpp>
-#include <detail/Expression_Mult.hpp>
+#include <FMath/detail/Field.hpp>
+#include <FMath/detail/Expression_Add.hpp>
+#include <FMath/detail/Expression_Mult.hpp>
 
 namespace FMath::detail
 {

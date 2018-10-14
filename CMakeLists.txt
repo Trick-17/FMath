@@ -148,18 +148,17 @@ endif( )
 
 
 ######### Where to search for library headers #########################
-set( FMATH_INCLUDE_DIRS 
+set( FMATH_INCLUDE_DIRS
      ${PROJECT_SOURCE_DIR}/include
-     ${PROJECT_SOURCE_DIR}/include/FMath
      ${PROJECT_SOURCE_DIR}/thirdparty )
 include_directories( ${FMATH_INCLUDE_DIRS} )
 #######################################################################
 
 
 ######### Declare File groups #########################################
-set( HEADER_FMATH_ROOT 
+set( HEADER_FMATH_ROOT
      ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/Core )
-set( HEADER_FMATH_DETAIL 
+set( HEADER_FMATH_DETAIL
      ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Convenience.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Field.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/FieldAssign.hpp

@@ -1,4 +1,6 @@
-#include <detail/Field.hpp>
+#include <FMath/detail/Field.hpp>
+
+#include <optional>
 
 namespace FMath::detail
 {

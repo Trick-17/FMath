@@ -1,6 +1,6 @@
-#include <detail/Using.hpp>
-#include <detail/Field.hpp>
-#include <detail/FieldAssign.hpp>
-#include <detail/FieldReductions.hpp>
-#include <detail/Operators.hpp>
-#include <detail/Convenience.hpp>
+#include <FMath/detail/Using.hpp>
+#include <FMath/detail/Field.hpp>
+#include <FMath/detail/FieldAssign.hpp>
+#include <FMath/detail/FieldReductions.hpp>
+#include <FMath/detail/Operators.hpp>
+#include <FMath/detail/Convenience.hpp>

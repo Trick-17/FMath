@@ -5,10 +5,10 @@
 
 #include <Eigen/Core>
 
-#include <detail/Expression_SubSet.hpp>
-#include <detail/Expression_Slice.hpp>
-#include <detail/Expression_Function.hpp>
-#include <detail/Using.hpp>
+#include <FMath/detail/Expression_SubSet.hpp>
+#include <FMath/detail/Expression_Slice.hpp>
+#include <FMath/detail/Expression_Function.hpp>
+#include <FMath/detail/Using.hpp>
 
 namespace FMath::detail
 {
