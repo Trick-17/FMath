@@ -1,0 +1,28 @@
+### See https://github.com/Trick-17/clang-build
+
+name = "fmath"
+
+[fmath]
+    [fmath.public-flags]
+        compile = ["-Wno-unknown-pragmas", "-Wno-deprecated-declarations"]
+    [fmath.windows.public-flags]
+        compile = ["-DNOMINMAX"]
+    [fmath.tests.flags]
+        compile = ["-Wno-sign-compare"]
+
+
+[fmath-omp] # TODO: openmp build
+    [fmath-omp.public-flags]
+        compile = ["-Wno-unknown-pragmas", "-Wno-deprecated-declarations"]
+    [fmath-omp.windows.public-flags]
+        compile = ["-DNOMINMAX"]
+    [fmath-omp.tests.flags]
+        compile = ["-Wno-sign-compare"]
+
+# [fmath-cuda] # TODO: cuda build
+#     [fmath-cuda.public-flags]
+#         compile = ["-Wno-unknown-pragmas", "-Wno-deprecated-declarations"]
+#     [fmath-cuda.windows.public-flags]
+#         compile = ["-DNOMINMAX"]
+#     [fmath-cuda.tests.flags]
+#         compile = ["-Wno-sign-compare"]
