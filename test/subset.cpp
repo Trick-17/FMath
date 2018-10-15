@@ -8,8 +8,8 @@ using FMath::scalar;
 TEST_CASE( "SubSet", "[SubSet]" )
 {
     // Initialize
-    Field<scalar> sf1({1,2,3,4,5});
-    Field<scalar> sf2({1,2,3,4,5});
+    Field<scalar> sf1{1,2,3,4,5};
+    Field<scalar> sf2{1,2,3,4,5};
     Field<scalar> sf3(5, 2);
 
     // Operate
@@ -42,9 +42,21 @@ TEST_CASE( "Slice", "[Slice]" )
     Field<scalar> sf3(5, 2);
 
     // Operate
-    sf2[{0,2,4}] = sf1.slice();
+    sf2[{0,2,4}] = sf1.slice(2);
     // Check
-    REQUIRE( sf2[0] == Approx( 1 ) );
-    REQUIRE( sf2[2] == Approx( 2 ) );
-    REQUIRE( sf2[4] == Approx( 3 ) );
+    REQUIRE( sf2[0] == Approx( 3 ) );
+    REQUIRE( sf2[2] == Approx( 4 ) );
+    REQUIRE( sf2[4] == Approx( 5 ) );
+
+    // Operate
+    sf2[{0,1}] = sf1.slice(1,2);
+    // Check
+    REQUIRE( sf2[0] == Approx( 2 ) );
+    REQUIRE( sf2[1] == Approx( 3 ) );
+
+    // // Operate // TODO: does not yet work
+    // sf2.slice() = sf3.slice();
+    // // Check
+    // REQUIRE( sf2[0] == Approx( 2 ) );
+    // REQUIRE( sf2[1] == Approx( 2 ) );
 }

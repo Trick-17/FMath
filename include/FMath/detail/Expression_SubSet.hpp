@@ -9,10 +9,10 @@ namespace FMath::detail
     class SubSetEx
     {
         Container & _container;
-        std::vector<int> const& _indices;
+        std::vector<std::size_t> const& _indices;
 
     public:
-        SubSetEx(Container & container, const std::vector<int> & indices): _container(container), _indices(indices)
+        SubSetEx(Container & container, const std::vector<std::size_t> & indices): _container(container), _indices(indices)
         {
             assert(_container.size() >= _indices.size());
         }

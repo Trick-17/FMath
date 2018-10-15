@@ -37,7 +37,7 @@ namespace FMath::detail
         scalar minval =  std::numeric_limits<scalar>::max();
 
 #       pragma omp parallel for reduction(min: minval)
-        for (unsigned int i = 0; i < size(); ++i)
+        for (std::size_t i = 0; i < size(); ++i)
             if (_container[i] < minval) minval = _container[i];
 
         return minval;
@@ -51,7 +51,7 @@ namespace FMath::detail
         scalar maxval = -std::numeric_limits<scalar>::max();
 
 #       pragma omp parallel for reduction(max : maxval)
-        for (unsigned int i = 0; i < size(); ++i)
+        for (std::size_t i = 0; i < size(); ++i)
         {
             if (_container[i] > maxval) maxval = _container[i];
         }
@@ -68,7 +68,7 @@ namespace FMath::detail
         scalar maxval = -std::numeric_limits<scalar>::max();
 
 #       pragma omp parallel for reduction(min: minval) reduction(max : maxval)
-        for (unsigned int i = 0; i < size(); ++i)
+        for (std::size_t i = 0; i < size(); ++i)
         {
             if (_container[i] < minval) minval = _container[i];
             if (_container[i] > maxval) maxval = _container[i];
@@ -85,7 +85,7 @@ namespace FMath::detail
         scalar minval =  std::numeric_limits<scalar>::max();
 
 #       pragma omp parallel for reduction(min: minval)
-        for (unsigned int i = 0; i < size(); ++i)
+        for (std::size_t i = 0; i < size(); ++i)
             for (int dim = 0; dim < 3; ++dim)
                 if (_container[i][dim] < minval) minval = _container[i][dim];
 
@@ -100,7 +100,7 @@ namespace FMath::detail
         scalar maxval = -std::numeric_limits<scalar>::max();
 
 #       pragma omp parallel for reduction(max : maxval)
-        for (unsigned int i = 0; i < size(); ++i)
+        for (std::size_t i = 0; i < size(); ++i)
             for (int dim = 0; dim < 3; ++dim)
                 if (_container[i][dim] > maxval) maxval = _container[i][dim];
 
@@ -116,7 +116,7 @@ namespace FMath::detail
         scalar maxval = -std::numeric_limits<scalar>::max();
 
 #       pragma omp parallel for reduction(min: minval) reduction(max : maxval)
-        for (unsigned int i = 0; i < size(); ++i)
+        for (std::size_t i = 0; i < size(); ++i)
         {
             for (int dim = 0; dim < 3; ++dim)
             {

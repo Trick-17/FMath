@@ -1,3 +1,5 @@
+#pragma once
+
 #include <FMath/detail/Field.hpp>
 
 #include <optional>
@@ -9,10 +11,10 @@ namespace FMath::detail
     class SliceEx
     {
         Container & _container;
-        int begin, end, stride;
+        std::size_t begin, end, stride;
 
     public:
-        SliceEx(Container & container, int i_begin, std::optional<int> i_end, int i_stride): _container(container), begin(i_begin), stride(i_stride)
+        SliceEx(Container & container, std::size_t i_begin, std::optional<std::size_t> i_end, std::size_t i_stride): _container(container), begin(i_begin), stride(i_stride)
         {
             if (i_end)
                 end = *i_end;
@@ -34,9 +36,9 @@ namespace FMath::detail
             return _container[begin + i*stride];
         }
 
-        auto size() const
+        std::size_t size() const
         {
-            return (end - begin) / stride;
+            return (1 + end - begin) / stride;
         }
     };
 }

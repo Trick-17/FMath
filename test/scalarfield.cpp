@@ -13,9 +13,9 @@ TEST_CASE( "ScalarField", "[ScalarField]" )
     Field<scalar> sf3(5, 2);
 
     // Operate
-    Field<scalar> sf_res1 = sf1 + sf2 * sf3;
+    Field<scalar> sf_res1 = sf1 + sf2 * sf3 + 2;
     
     // Check
-    REQUIRE( sf_res1[0] == Approx( 3 ) );
-    REQUIRE( sf_res1[4] == Approx( 15 ) );
+    REQUIRE( sf_res1[0] == Approx( 5 ) );
+    REQUIRE( sf_res1[4] == Approx( 17 ) );
 }

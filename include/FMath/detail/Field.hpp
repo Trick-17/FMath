@@ -220,13 +220,13 @@ namespace FMath::detail
         ///////////// SubSet Extraction /////////////////////////////////////////////////////
 
         // Extract a 1D slice of a Field
-        auto slice(int begin=0, std::optional<int> end={}, int stride=1)
+        auto slice(std::size_t begin=0, std::optional<std::size_t> end={}, std::size_t stride=1)
         {
             return Field<T, SliceEx<T, Container>>(SliceEx<T, Container>(contents(), begin, end, stride));
         }
 
         // Extract a subset of a Field's values via a list of indices
-        auto operator[] (const std::vector<int> & indices)
+        auto operator[] (const std::vector<std::size_t> & indices)
         {
             return Field<T, SubSetEx<T, Container>>(SubSetEx<T, Container>(contents(), indices));
         }
