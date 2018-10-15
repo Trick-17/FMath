@@ -11,4 +11,13 @@ namespace FMath::detail
         for (std::size_t i = 0; i < container_to.size(); ++i)
             container_to[i] = container_from[i];
     }
+
+    // Assignment function to place value into container_to
+    template<typename T, typename Container>
+    void Field<T, Container>::assign(Container & container_to, const T & value)
+    {
+#       pragma omp parallel for
+        for (std::size_t i = 0; i < container_to.size(); ++i)
+            container_to[i] = value;
+    }
 }

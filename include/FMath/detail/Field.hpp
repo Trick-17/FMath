@@ -20,6 +20,7 @@ namespace FMath::detail
         // Assignment function which explicitly evaluates an expression
         template <typename Container2>
         void assign(Container & container_to, const Container2 & container_from);
+        void assign(Container & container_to, const T & value);
 
     public:
         ///////////// Constructors //////////////////////////////////////////////////////////
@@ -36,6 +37,14 @@ namespace FMath::detail
         // Constructor for underlying container
         Field(const Container& other) : _container(other) {}
 
+        // Assignment operator for Field of same type (copy assignment)
+        Field& operator= (const Field& other)
+        {
+            assert(size() == other.size());
+            this->assign(_container, other);
+            return *this;
+        }
+
         // Assignment operator for Field of different type
         template<typename T2, typename R2>
         Field& operator= (const Field<T2, R2>& other)
@@ -47,6 +56,13 @@ namespace FMath::detail
                 this->assign(_container, other);
                 return *this;
             }
+        }
+
+        // Assignment operator for entity
+        Field& operator= (const T& other)
+        {
+            this->assign(_container, other);
+            return *this;
         }
 
         // A Field can be constructed such as to force its evaluation.

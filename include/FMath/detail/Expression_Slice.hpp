@@ -38,7 +38,7 @@ namespace FMath::detail
 
         std::size_t size() const
         {
-            return (1 + end - begin) / stride;
+            return 1 + (end - begin) / stride;
         }
     };
 }

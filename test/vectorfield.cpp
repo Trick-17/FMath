@@ -11,8 +11,11 @@ TEST_CASE( "VectorField", "[VectorField]" )
     // Initialize
     Field<scalar> sf1(5, 2);
 
-    Field<Vector3> vf1(5, {0, 0,   1});
-    Field<Vector3> vf2(5, {0, 0.5, 0.5});
+    Field<Vector3> vf1(5, {0, 0, 1});
+    Field<Vector3> vf2(5, {0, 0, 1});
+
+    // Assign
+    vf2 = Vector3{0, 0.5, 0.5};
 
     // Operate
     Field<scalar>  sf_res2 = vf1.dot(vf2) + sf1;
@@ -21,7 +24,7 @@ TEST_CASE( "VectorField", "[VectorField]" )
     Field<scalar>  sf_res3 = vf2.norm();
     Field<scalar>  sf_res4 = vf2.squaredNorm();
     Field<Vector3> vf_res3 = vf2.normalized();
-    
+
     // Check
     REQUIRE( sf_res2[0] == Approx( 2.5 ) );
 
