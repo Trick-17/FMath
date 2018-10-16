@@ -215,7 +215,7 @@ add_framework_test( scalarfield test/scalarfield.cpp )
 add_framework_test( vectorfield test/vectorfield.cpp )
 add_framework_test( transform   test/transform.cpp   )
 add_framework_test( reductions  test/reductions.cpp  )
-add_framework_test( subset      test/subset.cpp      )
+add_framework_test( subset      test/indexing.cpp    )
 #######################################################################
 
 
