@@ -169,7 +169,7 @@ namespace FMath::detail
 
         // Normalizes the Vector3 entries of a VectorField to norm 1.
         // If a norm is zero, nothing is done.
-        void normalize()
+        auto normalize()
         {
             static_assert(std::is_same_v<T, Vector3>, "FMATH USAGE ERROR: normalize() is only available on Field<Vector3>");
             if constexpr (std::is_same_v<T, Vector3>)
