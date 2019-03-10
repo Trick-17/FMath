@@ -44,26 +44,6 @@ namespace FMath::detail
         }
     };
 
-    // For a VectorField, this normalizes each Vector3 of the Field
-    template< typename T, typename Op >
-    class NormalizeEx
-    {
-        Op const& _op;
-
-    public:
-        NormalizeEx(Op const& a): _op(a)
-        {
-            static_assert(std::is_same_v<T, Vector3>, "Field<...>.normalize() is only available on Field<Vector3>");
-        }
-
-        auto size() const { return _op.size(); }
-
-        void operator[](const std::size_t i) const
-        { 
-            _op[i].normalize();
-        }
-    };
-
     // For a VectorField, this returns normalized Vector3 entries
     template< typename T, typename Op >
     class NormalizedEx

@@ -80,5 +80,13 @@ TEST_CASE( "Indexing fields, assigning and mixing slices", "[Indexing]" )
         // Check
         REQUIRE( sf2[0] == Approx( 2 ) );
         REQUIRE( sf2[1] == Approx( 3 ) );
+
+        // Total mixture
+        sf1.resize(4);
+        sf1 = Field<scalar>({0,10,20,30});
+        sf2[{0,2}].slice(0,1) = sf1.slice(1,3)[{1,0}];
+        // Check
+        REQUIRE( sf2[0] == Approx( 20 ) );
+        REQUIRE( sf2[2] == Approx( 10 ) );
     }
 }

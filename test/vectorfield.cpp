@@ -24,6 +24,8 @@ TEST_CASE( "VectorField", "[VectorField]" )
     Field<scalar>  sf_res3 = vf2.norm();
     Field<scalar>  sf_res4 = vf2.squaredNorm();
     Field<Vector3> vf_res3 = vf2.normalized();
+    Field<Vector3> vf_res4 = vf2;
+    vf_res4.normalize();
 
     // Check
     REQUIRE( sf_res2[0] == Approx( 2.5 ) );
@@ -37,4 +39,5 @@ TEST_CASE( "VectorField", "[VectorField]" )
     REQUIRE( sf_res3[0] == Approx(0.5*std::sqrt(2)) );
     REQUIRE( sf_res4[0] == Approx(0.5) );
     REQUIRE( vf_res3[0][1] == Approx(0.5*std::sqrt(2)) );
+    REQUIRE( vf_res4[0][1] == Approx(0.5*std::sqrt(2)) );
 }

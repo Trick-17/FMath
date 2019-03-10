@@ -8,6 +8,7 @@
 #include <FMath/detail/Expression_SubSet.hpp>
 #include <FMath/detail/Expression_Slice.hpp>
 #include <FMath/detail/Expression_Function.hpp>
+#include <FMath/detail/Expression_Lambda.hpp>
 #include <FMath/detail/Using.hpp>
 
 namespace FMath::detail
@@ -78,6 +79,15 @@ namespace FMath::detail
 
         ///////////// Basics ////////////////////////////////////////////////////////////////
 
+        void resize(std::size_t size)
+        {
+            _container.resize(size);
+        }
+        void resize(std::size_t size, const T& value)
+        {
+            _container.resize(size, value);
+        }
+
         // If the container is a std::vector, data can be retrieved as a pointer
         T* data()
         {
@@ -111,6 +121,23 @@ namespace FMath::detail
             // Field<scalar> etc. to VectorX of size N
             else
                 return Eigen::Ref<RefT>( Eigen::Map<RefT>(this->data(), this->size()) );
+        }
+
+        ///////////// Lambda ////////////////////////////////////////////////////////////////
+
+        // Applies a given lambda to every entry of the Field.
+        // The lambda is passed the index and the entry corresponding to the index.
+        // This function is applied immediately, not on assignment.
+        void apply_lambda(std::function<void(std::size_t, T&)> const& lambda)
+        {
+            this->assign(_container, Field<T, FieldLambda<T, Container>>(FieldLambda<T, Container>(contents(), lambda)));
+        }
+
+        // Applies a given lambda to every entry of the Field.
+        // The lambda is passed the index and the entry corresponding to the index.
+        auto applied_lambda(std::function<void(std::size_t, T&)> const& lambda)
+        {
+            return Field<T, FieldLambda<T, Container>>(FieldLambda<T, Container>(contents(), lambda));
         }
 
         ///////////// Reductions ////////////////////////////////////////////////////////////
@@ -169,12 +196,13 @@ namespace FMath::detail
 
         // Normalizes the Vector3 entries of a VectorField to norm 1.
         // If a norm is zero, nothing is done.
-        auto normalize()
+        // This function is applied immediately, not on assignment.
+        void normalize()
         {
             static_assert(std::is_same_v<T, Vector3>, "FMATH USAGE ERROR: normalize() is only available on Field<Vector3>");
             if constexpr (std::is_same_v<T, Vector3>)
             {
-                return Field<T, NormalizeEx<T, Container>>(NormalizeEx<T, Container>(contents()));
+                this->assign(_container, Field<T, NormalizedEx<T, Container>>(NormalizedEx<T, Container>(contents())));
             }
         }
 
