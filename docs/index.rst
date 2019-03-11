@@ -11,15 +11,16 @@ FMath - Efficient and expressive use of abstract Fields
 .. toctree::
    :maxdepth: 1
    :caption: Introduction:
-   
+
    General Concepts            <General>
    Using FMath in your Project <Using>
 
 .. toctree::
    :maxdepth: 1
    :caption: Usage Examples:
-   
+
    Basics <Examples_Basics>
+   Lambdas <Lambdas>
 
 .. toctree::
    :maxdepth: 1

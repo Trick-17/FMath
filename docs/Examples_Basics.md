@@ -1,4 +1,8 @@
+Basics
+=======================================================
+
 ### Reductions
+
 ```C++
 #include <FMath/Core>
 
@@ -13,6 +17,7 @@ FMath::scalar dot = sf1.sum();
 ```
 
 ### Operators
+
 ```C++
 #include <FMath/Core>
 
@@ -26,6 +31,7 @@ FMath::ScalarField sf_result = vf.dot(vf1);
 ```
 
 ### Convenience math functions
+
 ```C++
 #include <FMath/Core>
 
@@ -38,7 +44,9 @@ FMath::VectorField vf_cross = vf1.cross(vf2);
 ```
 
 ### Other convenience functions
+
 Copying or re-interpreting a `Field` as an `Eigen::VectorX`
+
 ```C++
 #include <FMath/Core>
 
@@ -57,6 +65,7 @@ Eigen::Ref<VectorX> vecRef2 = vf.asRef<VectorX>();
 ```
 
 Extracting and operating on an indexed subset of a `Field`
+
 ```C++
 #include <FMath/Core>
 

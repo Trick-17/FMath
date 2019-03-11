@@ -1,4 +1,8 @@
+Using
+=======================================================
+
 **Requirements:**
+
 - C++17
 - OpenMP 4.5 (optional)
 - (later maybe a CUDA version which supports C++17 features)

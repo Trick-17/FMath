@@ -1,3 +1,6 @@
+General Concepts
+=======================================================
+
 The library revolves around the `Field` template class, which is a convenience
 wrapper around `std::vector` with added operators and functions. The Eigen library
 is used for vector operations.
