@@ -26,7 +26,7 @@ before_install:
 install:
   - export CC=${COMPILER_C} CXX=${COMPILER_CXX}
   - export PATH=/usr/local/bin:$PATH
-  - ln -s /usr/local/Cellar/gcc/8.2.0/bin/gcov-8 /usr/local/bin/gcov
+  - ln -s /usr/local/Cellar/gcc/8.3.0/bin/gcov-8 /usr/local/bin/gcov
   - export CMAKE_OPTIONS="${CMAKE_OPTIONS} -DCMAKE_C_COMPILER=${COMPILER_C} -DCMAKE_CXX_COMPILER=${COMPILER_CXX}"
   - cd ${TRAVIS_BUILD_DIR}
   - |
