@@ -240,6 +240,7 @@ endmacro( add_framework_bench benchName benchSrc )
 
 ### Create benchmarks
 add_framework_bench( simple  benchmark/simple.cpp  )
+add_framework_bench( lambdas benchmark/lambdas.cpp )
 #######################################################################
 
 
