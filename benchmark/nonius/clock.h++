@@ -16,19 +16,8 @@
 
 #include <nonius/detail/compiler.h++>
 
-// MSVC <chrono> is borken and had little to no testing done before shipping (Dev14/VS15 CTP fixes it)
-#if defined(NONIUS_MSVC) && NONIUS_MSVC < 1900
-#   ifndef NONIUS_USE_BOOST_CHRONO
-#       define NONIUS_USE_BOOST_CHRONO
-#   endif
-#endif
-
-#ifdef NONIUS_USE_BOOST_CHRONO
-#   include <boost/chrono.hpp>
-#else
-#   include <chrono>
-#   include <ratio>
-#endif
+#include <chrono>
+#include <ratio>
 
 namespace nonius {
 #ifdef NONIUS_USE_BOOST_CHRONO
