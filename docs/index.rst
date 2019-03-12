@@ -19,7 +19,8 @@ FMath - Efficient and expressive use of abstract Fields
    :maxdepth: 1
    :caption: Usage Examples:
 
-   Basics <Examples_Basics>
+   Basics  <Basics>
+   Subsets <Subsets>
    Lambdas <Lambdas>
 
 .. toctree::

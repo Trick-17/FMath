@@ -6,14 +6,22 @@ Basics
 ```C++
 #include <FMath/Core>
 
+using FMath::Field;
+using FMath::scalar;
+using FMath::Vector3;
+
 // Single field reduction
-FMath::VectorField vf(N);
-FMath::scalar mean = vf.mean();
+int N = 10;
+Field<Vector3> vf(N, Vector3{0,0,1});
+Vector3 mean = vf.mean();
 
 // N-dimensional dot-product
 FMath::ScalarField sf1(N), sf2(N);
 sf1 *= sf2;
 FMath::scalar dot = sf1.sum();
+
+// More efficient version of the dot product:
+dot = (sf1*sf2).sum();
 ```
 
 ### Operators
@@ -62,29 +70,4 @@ FMath::VectorX vec2 = vf.asRef<VectorX>();
 Eigen::Ref<VectorX> vecRef1 = sf.asRef<VectorX>();
 // Interpret a vector field as a 3N-dimensional vector without copying
 Eigen::Ref<VectorX> vecRef2 = vf.asRef<VectorX>();
-```
-
-Extracting and operating on an indexed subset of a `Field`
-
-```C++
-#include <FMath/Core>
-
-// A Field of size N1 and an index list of size N2<N1
-FMath::ScalarField sf1(N1);
-FMath::IntField    index_list1(N2);
-
-// Set the indices of the Field entries you wish to extract...
-// (this can also be used to re-order a Field)
-
-// Extract the indexed set
-FMath::ScalarField sf_subset1 = sf1[index_list1];
-
-// Extract a small set via an initializer list
-FMath::ScalarField sf_subset2 = sf1[{0,3,22}];
-
-// Operate on subsets, combining different index lists
-FMath::ScalarField sf2(N1);
-FMath::ScalarField sf3(N3);
-FMath::IntField    index_list2(N2);
-sf1[index_list1] = sf2[index_list1] + sf3[index_list2];
 ```
