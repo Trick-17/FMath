@@ -186,25 +186,25 @@ source_group( "detail" FILES ${HEADER_FMATH_DETAIL} )
 #######################################################################
 
 
-######### Test executable ###############################################
+######### Test executables ############################################
 set( TEST_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR} )
 ### Test creation macro
 macro( add_framework_test testName testSrc )
     # Executable
-    add_executable( ${testName} test/main.cpp ${testSrc} )
+    add_executable( test_${testName} test/main.cpp ${testSrc} )
     # Properties
-    set_property( TARGET ${testName} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${TEST_RUNTIME_OUTPUT_DIRECTORY} )
-    set_property( TARGET ${testName} PROPERTY CXX_STANDARD 17 )
-    set_property( TARGET ${testName} PROPERTY CXX_STANDARD_REQUIRED ON )
-    set_property( TARGET ${testName} PROPERTY CXX_EXTENSIONS OFF )
-    set_property( TARGET ${testName} PROPERTY COMPILE_FLAGS "${FMATH_COMPILE_FLAGS} ${FMATH_FLAGS_COVERAGE}" )
-    set_property( TARGET ${testName} PROPERTY LINK_FLAGS    "${FMATH_LINK_FLAGS}    ${FMATH_FLAGS_COVERAGE}" )
+    set_property( TARGET test_${testName} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${TEST_RUNTIME_OUTPUT_DIRECTORY} )
+    set_property( TARGET test_${testName} PROPERTY CXX_STANDARD 17 )
+    set_property( TARGET test_${testName} PROPERTY CXX_STANDARD_REQUIRED ON )
+    set_property( TARGET test_${testName} PROPERTY CXX_EXTENSIONS OFF )
+    set_property( TARGET test_${testName} PROPERTY COMPILE_FLAGS "${FMATH_COMPILE_FLAGS} ${FMATH_FLAGS_COVERAGE}" )
+    set_property( TARGET test_${testName} PROPERTY LINK_FLAGS    "${FMATH_LINK_FLAGS}    ${FMATH_FLAGS_COVERAGE}" )
     # Include Directories
-    target_include_directories( ${testName} PRIVATE ${PROJECT_SOURCE_DIR}/test )
+    target_include_directories( test_${testName} PRIVATE ${PROJECT_SOURCE_DIR}/test )
     # Add the test
-    add_test( NAME        ${testName}
+    add_test( NAME        test_${testName}
               WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-              COMMAND           ${testName} --use-colour=yes )
+              COMMAND           test_${testName} --use-colour=yes )
 endmacro( add_framework_test testName testSrc )
 
 ### Enable CTest testing
@@ -216,6 +216,30 @@ add_framework_test( vectorfield test/vectorfield.cpp )
 add_framework_test( transform   test/transform.cpp   )
 add_framework_test( reductions  test/reductions.cpp  )
 add_framework_test( subset      test/indexing.cpp    )
+#######################################################################
+
+
+######### Benchmark executables #######################################
+set( BENCH_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR} )
+### Benchmark creation macro
+macro( add_framework_bench benchName benchSrc )
+    # Executable
+    add_executable( bench_${benchName} ${benchSrc} )#WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} )
+    # Properties
+    set_property( TARGET bench_${benchName} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${BENCH_RUNTIME_OUTPUT_DIRECTORY} )
+    set_property( TARGET bench_${benchName} PROPERTY CXX_STANDARD 17 )
+    set_property( TARGET bench_${benchName} PROPERTY CXX_STANDARD_REQUIRED ON )
+    set_property( TARGET bench_${benchName} PROPERTY CXX_EXTENSIONS OFF )
+    set_property( TARGET bench_${benchName} PROPERTY COMPILE_FLAGS "${FMATH_COMPILE_FLAGS} -Wno-unused-variable" )
+    set_property( TARGET bench_${benchName} PROPERTY LINK_FLAGS    "${FMATH_LINK_FLAGS}   " )
+    # Include Directories
+    target_include_directories( bench_${benchName} PRIVATE ${PROJECT_SOURCE_DIR}/benchmark )
+    # Add the bench
+    # add_executable( NAME        ${benchName} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} )
+endmacro( add_framework_bench benchName benchSrc )
+
+### Create benchmarks
+add_framework_bench( simple  benchmark/simple.cpp  )
 #######################################################################
 
 
