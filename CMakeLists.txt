@@ -105,6 +105,7 @@ if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" )
     ### Compile and Link Flags (we deactivate -Wint-in-bool-context because of Eigen)
     set( FMATH_COMPILE_FLAGS "-Wall -Wextra -Wpedantic -Wno-int-in-bool-context" )
     set( FMATH_LINK_FLAGS    "" )
+    set( FMATH_BENCH_COMPILE_FLAGS "-Wno-unused-variable" )
     ### We deactivate -Wunknown-pragmas in case OpenMP is not used
     if( NOT FMATH_USE_OPENMP )
         set( FMATH_COMPILE_FLAGS "${FMATH_COMPILE_FLAGS} -Wno-unknown-pragmas" )
@@ -115,18 +116,21 @@ elseif( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" )
     ### Compile and Link Flags
     set( FMATH_COMPILE_FLAGS "-Wall -Wextra -Wpedantic" )
     set( FMATH_LINK_FLAGS    "" )
+    set( FMATH_BENCH_COMPILE_FLAGS "-Wno-unused-variable" )
 
 ### Microsoft Visual Compiler - msvc
 elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
     ### Compile and Link Flags
     set( FMATH_COMPILE_FLAGS "-DNOMINMAX" )
     set( FMATH_LINK_FLAGS    "" )
+    set( FMATH_BENCH_COMPILE_FLAGS "" )
 
 ### Intel Compiler - icc
 elseif( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel" )
     ### Compile and Link Flags
     set( FMATH_COMPILE_FLAGS "-Wall -Wextra -Wpedantic" )
     set( FMATH_LINK_FLAGS    "" )
+    set( FMATH_BENCH_COMPILE_FLAGS "-Wno-unused-variable" )
 endif( )
 message( STATUS "FMath Compile Flags: ${FMATH_COMPILE_FLAGS}" )
 message( STATUS "FMath Link Flags:    ${FMATH_LINK_FLAGS}" )
@@ -230,8 +234,8 @@ macro( add_framework_bench benchName benchSrc )
     set_property( TARGET bench_${benchName} PROPERTY CXX_STANDARD 17 )
     set_property( TARGET bench_${benchName} PROPERTY CXX_STANDARD_REQUIRED ON )
     set_property( TARGET bench_${benchName} PROPERTY CXX_EXTENSIONS OFF )
-    set_property( TARGET bench_${benchName} PROPERTY COMPILE_FLAGS "${FMATH_COMPILE_FLAGS} -Wno-unused-variable" )
-    set_property( TARGET bench_${benchName} PROPERTY LINK_FLAGS    "${FMATH_LINK_FLAGS}   " )
+    set_property( TARGET bench_${benchName} PROPERTY COMPILE_FLAGS "${FMATH_COMPILE_FLAGS} ${FMATH_BENCH_COMPILE_FLAGS}" )
+    set_property( TARGET bench_${benchName} PROPERTY LINK_FLAGS    "${FMATH_LINK_FLAGS}" )
     # Include Directories
     target_include_directories( bench_${benchName} PRIVATE ${PROJECT_SOURCE_DIR}/benchmark )
     # Add the bench
