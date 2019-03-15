@@ -48,7 +48,7 @@ Field<scalar> res(N, 0.0);
 
 auto lambda = [&](std::size_t idx, Vector3& val)
 {
-    // Inside entries get doth directions
+    // Inside entries get both directions
     if( idx > 0 && idx < orientations.size()-1 )
     {
         for( auto& rel : relative_indices )
