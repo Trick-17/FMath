@@ -8,8 +8,8 @@ namespace FMath
 {
     // Field
     template<typename T>
-    using Field       = FMath::detail::Field<T>;
-    
+    using Field = FMath::detail::Field<T>;
+
     // Convenience Fields
     using IntField    = Field<int>;
     using ScalarField = Field<scalar>;

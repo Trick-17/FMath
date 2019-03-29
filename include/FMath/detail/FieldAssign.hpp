@@ -3,8 +3,10 @@
 namespace FMath::detail
 {
     // Assignment function to evaluate container_from into container_to
-    template<typename T, typename Container> template <typename Container2>
-    void Field<T, Container>::assign(Container & container_to, const Container2 & container_from)
+    template<typename T, typename Container>
+    template<typename Container2>
+    void Field<T, Container>::assign(
+        Container & container_to, const Container2 & container_from)
     {
         assert(container_to.size() == container_from.size());
 #       pragma omp parallel for

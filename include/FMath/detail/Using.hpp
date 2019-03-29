@@ -12,8 +12,8 @@ namespace FMath
 #   endif
 
     // Dynamic Eigen typedefs
-    using VectorX    = Eigen::Matrix<scalar, -1,  1>;
-    using RowVectorX = Eigen::Matrix<scalar,  1, -1>;
+    using VectorX    = Eigen::Matrix<scalar, -1, 1>;
+    using RowVectorX = Eigen::Matrix<scalar, 1, -1>;
     using MatrixX    = Eigen::Matrix<scalar, -1, -1>;
 
     // 3D Eigen typedefs
