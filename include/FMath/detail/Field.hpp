@@ -20,8 +20,8 @@ namespace FMath::detail
 
         // Assignment function which explicitly evaluates an expression
         template<typename Container2>
-        void assign(Container & container_to, const Container2 & container_from);
-        void assign(Container & container_to, const T & value);
+        void assign(const Container2 & container_from);
+        void assign(const T & value);
 
       public:
         ///////////// Constructors //////////////////////////////////////////////////////
@@ -30,21 +30,36 @@ namespace FMath::detail
         Field(const std::size_t n) : _container(n) {}
 
         // Field with initial size and value
-        Field(const std::size_t n, const T initialValue) : _container(n, initialValue) {}
+        Field(const std::size_t n, const T & initialValue) : _container(n, initialValue) {}
 
         // Field via initializer list
-        Field(std::initializer_list<T> list) : _container(list) {}
+        Field(const std::initializer_list<T> & list) : _container(list) {}
 
         // Constructor for underlying container
         Field(const Container & other) : _container(other) {}
+
+        // A Field can be constructed such as to force its evaluation.
+        template<typename T2, typename R2>
+        Field(const Field<T2, R2> & other) : _container(other.size())
+        {
+            static_assert(
+                std::is_same_v<T, T2>, "FMATH USAGE ERROR: Field<> template parameter "
+                                       "must be identical for assignment to work");
+            if constexpr (std::is_same_v<T, T2>)
+            {
+                this->assign(other);
+            }
+        }
 
         // Assignment operator for Field of same type (copy assignment)
         Field & operator=(const Field & other)
         {
             assert(size() == other.size());
-            this->assign(_container, other);
+            this->assign(other);
             return *this;
         }
+
+        ///////////// Assignment ////////////////////////////////////////////////////////
 
         // Assignment operator for Field of different type
         template<typename T2, typename R2>
@@ -56,38 +71,25 @@ namespace FMath::detail
             if constexpr (std::is_same_v<T, T2>)
             {
                 assert(size() == other.size());
-                this->assign(_container, other);
+                this->assign(other);
                 return *this;
             }
         }
 
         // Assignment operator for entity
-        Field & operator=(const T & other)
+        Field & operator=(const T & value)
         {
-            this->assign(_container, other);
+            this->assign(value);
             return *this;
-        }
-
-        // A Field can be constructed such as to force its evaluation.
-        template<typename T2, typename R2>
-        Field(Field<T2, R2> const & other) : _container(other.size())
-        {
-            static_assert(
-                std::is_same_v<T, T2>, "FMATH USAGE ERROR: Field<> template parameter "
-                                       "must be identical for assignment to work");
-            if constexpr (std::is_same_v<T, T2>)
-            {
-                this->assign(_container, other);
-            }
         }
 
         ///////////// Basics ////////////////////////////////////////////////////////////
 
-        void resize(std::size_t size)
+        void resize(const std::size_t size)
         {
             _container.resize(size);
         }
-        void resize(std::size_t size, const T & value)
+        void resize(const std::size_t size, const T & value)
         {
             _container.resize(size, value);
         }
@@ -102,7 +104,7 @@ namespace FMath::detail
                 "Expressions");
             if constexpr (std::is_same_v<Container, std::vector<T>>)
             {
-                return &_container[0];
+                return _container.data();
             }
         }
 
@@ -152,60 +154,61 @@ namespace FMath::detail
         // Applies a given lambda to every entry of the Field.
         // The lambda is passed the index and the entry corresponding to the index.
         // This function is applied immediately, not on assignment.
-        void apply_lambda(std::function<void(std::size_t, T &)> const & lambda)
+        template<typename Lambda>
+        void apply_lambda(const Lambda & lambda)
         {
-            this->assign(
-                _container, Field<T, FieldLambda<T, Container>>(
-                                FieldLambda<T, Container>(contents(), lambda)));
+            this->assign(Field<T, FieldLambda<T, Container, Lambda>>(
+                FieldLambda<T, Container, Lambda>(this->contents(), lambda)));
         }
 
         // Applies a given lambda to every entry of the Field.
         // The lambda is passed the index and the entry corresponding to the index.
-        auto applied_lambda(std::function<void(std::size_t, T &)> const & lambda)
+        template<typename Lambda>
+        auto applied_lambda(const Lambda & lambda)
         {
-            return Field<T, FieldLambda<T, Container>>(
-                FieldLambda<T, Container>(contents(), lambda));
+            return Field<T, FieldLambda<T, Container, Lambda>>(
+                FieldLambda<T, Container, Lambda>(this->contents(), lambda));
         }
 
         ///////////// Reductions ////////////////////////////////////////////////////////
 
         // Returns the sum over all entries of the Field
-        T sum();
+        T sum() const;
 
         // Returns the average over all entries of the Field
-        T mean();
+        T mean() const;
 
         // This is only valid for scalar contents
         // This will return the minimum value.
-        scalar min();
+        scalar min() const;
 
         // This is only valid for scalar contents
-        // This will return themaximum value.
-        scalar max();
+        // This will return the maximum value.
+        scalar max() const;
 
         // This is only valid for scalar contents
         // This will return the minimum and maximum value.
-        std::pair<scalar, scalar> minmax();
+        std::pair<scalar, scalar> minmax() const;
 
         // This is only valid for Vector3 contents
         // Returns the minium and maximum value of the components of all vectorfield
         // entries
-        scalar min_component();
+        scalar min_component() const;
 
         // This is only valid for Vector3 contents
         // Returns the minium and maximum value of the components of all vectorfield
         // entries
-        scalar max_component();
+        scalar max_component() const;
 
         // This is only valid for Vector3 contents
         // Returns the minium and maximum value of the components of all vectorfield
         // entries
-        std::pair<scalar, scalar> minmax_component();
+        std::pair<scalar, scalar> minmax_component() const;
 
         ///////////// VectorField Operations on self ////////////////////////////////////
 
         // For a VectorField, this returns a Field of the Vector3 norms
-        auto norm()
+        auto norm() const
         {
             static_assert(
                 std::is_same_v<T, Vector3>,
@@ -213,12 +216,12 @@ namespace FMath::detail
             if constexpr (std::is_same_v<T, Vector3>)
             {
                 return Field<scalar, NormEx<T, Container>>(
-                    NormEx<T, Container>(contents()));
+                    NormEx<T, Container>(this->contents()));
             }
         }
 
         // For a VectorField, this returns a Field of the squared Vector3 norms
-        auto squaredNorm()
+        auto squaredNorm() const
         {
             static_assert(
                 std::is_same_v<T, Vector3>,
@@ -227,7 +230,7 @@ namespace FMath::detail
             if constexpr (std::is_same_v<T, Vector3>)
             {
                 return Field<scalar, SquaredNormEx<T, Container>>(
-                    SquaredNormEx<T, Container>(contents()));
+                    SquaredNormEx<T, Container>(this->contents()));
             }
         }
 
@@ -241,15 +244,14 @@ namespace FMath::detail
                 "FMATH USAGE ERROR: normalize() is only available on Field<Vector3>");
             if constexpr (std::is_same_v<T, Vector3>)
             {
-                this->assign(
-                    _container, Field<T, NormalizedEx<T, Container>>(
-                                    NormalizedEx<T, Container>(contents())));
+                this->assign(Field<T, NormalizedEx<T, Container>>(
+                    NormalizedEx<T, Container>(this->contents())));
             }
         }
 
         // Normalizes the Vector3 entries of a VectorField to norm 1.
         // If a norm is zero, nothing is done.
-        auto normalized()
+        auto normalized() const
         {
             static_assert(
                 std::is_same_v<T, Vector3>,
@@ -258,7 +260,7 @@ namespace FMath::detail
             if constexpr (std::is_same_v<T, Vector3>)
             {
                 return Field<T, NormalizedEx<T, Container>>(
-                    NormalizedEx<T, Container>(contents()));
+                    NormalizedEx<T, Container>(this->contents()));
             }
         }
 
@@ -266,7 +268,7 @@ namespace FMath::detail
 
         // Element-wise dot-product between vector-fields, yielding a scalar-field
         template<typename Container2>
-        auto dot(const Field<Vector3, Container2> & field)
+        auto dot(const Field<Vector3, Container2> & field) const
         {
             static_assert(
                 std::is_same_v<T, Vector3>,
@@ -275,12 +277,12 @@ namespace FMath::detail
             {
                 return Field<scalar, FieldDotFieldEx<T, Container, Container2>>(
                     FieldDotFieldEx<T, Container, Container2>(
-                        contents(), field.contents()));
+                        this->contents(), field.contents()));
             }
         }
 
         // Element-wise dot-product between a vector-field and a vector, yielding a scalar-field
-        auto dot(const Vector3 & vec)
+        auto dot(const Vector3 & vec) const
         {
             static_assert(
                 std::is_same_v<T, Vector3>,
@@ -288,13 +290,13 @@ namespace FMath::detail
             if constexpr (std::is_same_v<T, Vector3>)
             {
                 return Field<scalar, VectorDotFieldEx<T, Container>>(
-                    VectorDotFieldEx<T, Container>(contents(), vec));
+                    VectorDotFieldEx<T, Container>(this->contents(), vec));
             }
         }
 
         // Element-wise cross-product between vector-fields, yielding a vector-field
         template<typename Container2>
-        auto cross(const Field<Vector3, Container2> & field)
+        auto cross(const Field<Vector3, Container2> & field) const
         {
             static_assert(
                 std::is_same_v<T, Vector3>,
@@ -303,12 +305,12 @@ namespace FMath::detail
             {
                 return Field<Vector3, FieldCrossFieldEx<T, Container, Container2>>(
                     FieldCrossFieldEx<T, Container, Container2>(
-                        contents(), field.contents()));
+                        this->contents(), field.contents()));
             }
         }
 
         // Element-wise cross-product between a vector-field and a vector, yielding a vector-field
-        auto cross(const Vector3 & vec)
+        auto cross(const Vector3 & vec) const
         {
             static_assert(
                 std::is_same_v<T, Vector3>,
@@ -316,7 +318,7 @@ namespace FMath::detail
             if constexpr (std::is_same_v<T, Vector3>)
             {
                 return Field<Vector3, VectorCrossFieldEx<T, Container>>(
-                    VectorCrossFieldEx<T, Container>(contents(), vec));
+                    VectorCrossFieldEx<T, Container>(this->contents(), vec));
             }
         }
 
@@ -324,18 +326,18 @@ namespace FMath::detail
 
         // Extract a 1D slice of a Field
         auto slice(
-            std::size_t begin = 0, std::optional<std::size_t> end = {},
-            std::size_t stride = 1)
+            const std::size_t begin = 0, const std::optional<std::size_t> end = {},
+            const std::size_t stride = 1)
         {
             return Field<T, SliceEx<T, Container>>(
-                SliceEx<T, Container>(contents(), begin, end, stride));
+                SliceEx<T, Container>(this->contents(), begin, end, stride));
         }
 
         // Extract a subset of a Field's values via a list of indices
         auto operator[](const std::vector<std::size_t> & indices)
         {
             return Field<T, SubSetEx<T, Container>>(
-                SubSetEx<T, Container>(contents(), indices));
+                SubSetEx<T, Container>(this->contents(), indices));
         }
     };
 }

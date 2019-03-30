@@ -8,10 +8,10 @@ namespace FMath::detail
     template<typename T, typename Op>
     class NormEx
     {
-        Op const & _op;
+        const Op & _op;
 
       public:
-        NormEx(Op const & a) : _op(a)
+        NormEx(const Op & a) : _op(a)
         {
             static_assert(
                 std::is_same_v<T, Vector3>,
@@ -33,10 +33,10 @@ namespace FMath::detail
     template<typename T, typename Op>
     class SquaredNormEx
     {
-        Op const & _op;
+        const Op & _op;
 
       public:
-        SquaredNormEx(Op const & a) : _op(a)
+        SquaredNormEx(const Op & a) : _op(a)
         {
             static_assert(
                 std::is_same_v<T, Vector3>,
@@ -58,10 +58,10 @@ namespace FMath::detail
     template<typename T, typename Op>
     class NormalizedEx
     {
-        Op const & _op;
+        const Op & _op;
 
       public:
-        NormalizedEx(Op const & a) : _op(a)
+        NormalizedEx(const Op & a) : _op(a)
         {
             static_assert(
                 std::is_same_v<T, Vector3>,
@@ -83,11 +83,11 @@ namespace FMath::detail
     template<typename T, typename Op1, typename Op2>
     class FieldDotFieldEx
     {
-        Op1 const & _op1;
-        Op2 const & _op2;
+        const Op1 & _op1;
+        const Op2 & _op2;
 
       public:
-        FieldDotFieldEx(Op1 const & a, Op2 const & b) : _op1(a), _op2(b)
+        FieldDotFieldEx(const Op1 & a, const Op2 & b) : _op1(a), _op2(b)
         {
             static_assert(
                 std::is_same_v<T, Vector3>,
@@ -110,11 +110,11 @@ namespace FMath::detail
     template<typename T, typename Op>
     class VectorDotFieldEx
     {
-        Op const & _op;
-        Vector3 const & _vec;
+        const Op & _op;
+        const Vector3 & _vec;
 
       public:
-        VectorDotFieldEx(Op const & a, Vector3 const & b) : _op(a), _vec(b)
+        VectorDotFieldEx(const Op & a, const Vector3 & b) : _op(a), _vec(b)
         {
             static_assert(
                 std::is_same_v<T, Vector3>,
@@ -136,11 +136,11 @@ namespace FMath::detail
     template<typename T, typename Op1, typename Op2>
     class FieldCrossFieldEx
     {
-        Op1 const & _op1;
-        Op2 const & _op2;
+        const Op1 & _op1;
+        const Op2 & _op2;
 
       public:
-        FieldCrossFieldEx(Op1 const & a, Op2 const & b) : _op1(a), _op2(b)
+        FieldCrossFieldEx(const Op1 & a, const Op2 & b) : _op1(a), _op2(b)
         {
             static_assert(
                 std::is_same_v<T, Vector3>,
@@ -163,11 +163,11 @@ namespace FMath::detail
     template<typename T, typename Op1>
     class VectorCrossFieldEx
     {
-        Op1 const & _op1;
-        Vector3 const & _vec;
+        const Op1 & _op1;
+        const Vector3 & _vec;
 
       public:
-        VectorCrossFieldEx(Op1 const & a, Vector3 const & b) : _op1(a), _vec(b)
+        VectorCrossFieldEx(const Op1 & a, const Vector3 & b) : _op1(a), _vec(b)
         {
             static_assert(
                 std::is_same_v<T, Vector3>,

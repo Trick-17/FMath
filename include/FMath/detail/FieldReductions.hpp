@@ -9,7 +9,7 @@ namespace FMath::detail
         initializer(omp_priv = Vector3::Zero())
 
     template<typename T, typename Container>
-    T Field<T, Container>::sum()
+    T Field<T, Container>::sum() const
     {
         T ret;
         if constexpr (std::is_same_v<T, Vector3>)
@@ -24,13 +24,13 @@ namespace FMath::detail
     }
 
     template<typename T, typename Container>
-    T Field<T, Container>::mean()
+    T Field<T, Container>::mean() const
     {
         return sum() / static_cast<long double>(size());
     }
 
     template<typename T, typename Container>
-    scalar Field<T, Container>::min()
+    scalar Field<T, Container>::min() const
     {
         static_assert(
             std::is_arithmetic<T>(),
@@ -46,7 +46,7 @@ namespace FMath::detail
     }
 
     template<typename T, typename Container>
-    scalar Field<T, Container>::max()
+    scalar Field<T, Container>::max() const
     {
         static_assert(
             std::is_arithmetic<T>(),
@@ -64,7 +64,7 @@ namespace FMath::detail
     }
 
     template<typename T, typename Container>
-    std::pair<scalar, scalar> Field<T, Container>::minmax()
+    std::pair<scalar, scalar> Field<T, Container>::minmax() const
     {
         static_assert(
             std::is_arithmetic<T>(),
@@ -84,7 +84,7 @@ namespace FMath::detail
     }
 
     template<typename T, typename Container>
-    scalar Field<T, Container>::min_component()
+    scalar Field<T, Container>::min_component() const
     {
         static_assert(
             std::is_same_v<T, Vector3>,
@@ -101,7 +101,7 @@ namespace FMath::detail
     }
 
     template<typename T, typename Container>
-    scalar Field<T, Container>::max_component()
+    scalar Field<T, Container>::max_component() const
     {
         static_assert(
             std::is_same_v<T, Vector3>,
@@ -118,7 +118,7 @@ namespace FMath::detail
     }
 
     template<typename T, typename Container>
-    std::pair<scalar, scalar> Field<T, Container>::minmax_component()
+    std::pair<scalar, scalar> Field<T, Container>::minmax_component() const
     {
         static_assert(
             std::is_same_v<T, Vector3>,

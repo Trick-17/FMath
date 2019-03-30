@@ -7,16 +7,20 @@
 namespace FMath::detail
 {
     // Elementwise lambda(Field)
-    template<typename T, typename Op1>
+    template<typename T, typename Op1, typename Lambda>
     class FieldLambda
     {
-        using Lambda = std::function<void(std::size_t, T &)>;
-
-        Op1 & _op1;
-        Lambda const & _lambda;
+        const Op1 & _op1;
+        const Lambda & _lambda;
 
       public:
-        FieldLambda(Op1 & a, Lambda const & b) : _op1(a), _lambda(b) {}
+        FieldLambda(const Op1 & a, const Lambda & l) : _op1(a), _lambda(l)
+        {
+            static_assert(
+                std::is_convertible<Lambda, std::function<void(std::size_t, const T &)>>::value,
+                "FMATH USAGE ERROR: you cannot use lambda expressions with a type that "
+                "is not convertible to std::function<void(std::size_t, T &)>.");
+        }
 
         auto size() const
         {
@@ -25,8 +29,7 @@ namespace FMath::detail
 
         T operator[](const std::size_t i) const
         {
-            _lambda(i, _op1[i]);
-            return _op1[i];
+            return _lambda(i, _op1[i]);
         }
     };
 }

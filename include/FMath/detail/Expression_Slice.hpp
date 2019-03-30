@@ -15,8 +15,8 @@ namespace FMath::detail
 
       public:
         SliceEx(
-            Container & container, std::size_t i_begin, std::optional<std::size_t> i_end,
-            std::size_t i_stride)
+            Container & container, const std::size_t i_begin,
+            const std::optional<std::size_t> i_end, const std::size_t i_stride)
                 : _container(container), begin(i_begin), stride(i_stride)
         {
             if (i_end)

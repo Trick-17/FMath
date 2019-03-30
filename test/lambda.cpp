@@ -16,9 +16,9 @@ TEST_CASE( "Applying a lambda to the components of a Field", "[Lambda]" )
 
     SECTION( "apply" )
     {
-        auto lambda = [](std::size_t i, scalar& val)
+        auto lambda = [](const std::size_t i, const scalar &) -> scalar
         {
-            val = i+5;
+            return i + 5;
         };
 
         sf1.apply_lambda(lambda);
@@ -28,9 +28,9 @@ TEST_CASE( "Applying a lambda to the components of a Field", "[Lambda]" )
 
     SECTION( "applied" )
     {
-        auto lambda = [](std::size_t, scalar& val)
+        auto lambda = [](const std::size_t, const scalar & val) -> scalar
         {
-            val += 1;
+            return val + 1;
         };
 
         Field<scalar> res = sf1.applied_lambda(lambda) + sf2;
@@ -47,19 +47,21 @@ TEST_CASE( "Applying a lambda to the components of a Field", "[Lambda]" )
         Field<Vector3> intermediate(N, Vector3{0,0,0});
         Field<scalar> res(N, 0.0);
 
-        auto lambda = [&](std::size_t idx, Vector3& val)
+        auto lambda = [&](const std::size_t idx, const Vector3 & val) -> Vector3
         {
+            Vector3 tmp = val;
             if( idx > 0 && idx < orientations.size()-1 )
             {
                 for( auto& rel : relative_indices )
                 {
-                    val += orientations[idx+rel];
+                    tmp += orientations[idx+rel];
                 }
             }
             else if( idx == 0 )
-                val += orientations[idx+1];
+                tmp += orientations[idx+1];
             else if( idx == orientations.size()-1 )
-                val += orientations[idx-1];
+                tmp += orientations[idx-1];
+            return tmp;
         };
 
         res = orientations.dot(intermediate.applied_lambda(lambda));
