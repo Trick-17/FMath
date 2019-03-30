@@ -15,7 +15,7 @@ namespace FMath::detail
         {
             static_assert(
                 std::is_same_v<T, Vector3>,
-                "Field<...>.norm() is only available on Field<Vector3>");
+                "FMATH USAGE ERROR: NormEx can only be used with Vector3 as value type.");
         }
 
         auto size() const
@@ -39,8 +39,8 @@ namespace FMath::detail
         SquaredNormEx(const Op & a) : _op(a)
         {
             static_assert(
-                std::is_same_v<T, Vector3>,
-                "Field<...>.squaredNorm() is only available on Field<Vector3>");
+                std::is_same_v<T, Vector3>, "FMATH USAGE ERROR: SquaredNormEx can only "
+                                            "be used with Vector3 as value type.");
         }
 
         auto size() const
@@ -64,8 +64,8 @@ namespace FMath::detail
         NormalizedEx(const Op & a) : _op(a)
         {
             static_assert(
-                std::is_same_v<T, Vector3>,
-                "Field<...>.normalized() is only available on Field<Vector3>");
+                std::is_same_v<T, Vector3>, "FMATH USAGE ERROR: NormalizedEx can only be "
+                                            "used with Vector3 as value type.");
         }
 
         auto size() const
@@ -90,8 +90,8 @@ namespace FMath::detail
         FieldDotFieldEx(const Op1 & a, const Op2 & b) : _op1(a), _op2(b)
         {
             static_assert(
-                std::is_same_v<T, Vector3>,
-                "Field<...>.dot(...) is only available on Field<Vector3>");
+                std::is_same_v<T, Vector3>, "FMATH USAGE ERROR: FieldDotFieldEx can only "
+                                            "be used with Vector3 as value type.");
             assert(_op1.size() == _op2.size());
         }
 
@@ -117,8 +117,8 @@ namespace FMath::detail
         VectorDotFieldEx(const Op & a, const Vector3 & b) : _op(a), _vec(b)
         {
             static_assert(
-                std::is_same_v<T, Vector3>,
-                "Field<...>.dot(...) is only available on Field<Vector3>");
+                std::is_same_v<T, Vector3>, "FMATH USAGE ERROR: VectorDotFieldEx can "
+                                            "only be used with Vector3 as value type.");
         }
 
         auto size() const
@@ -143,8 +143,8 @@ namespace FMath::detail
         FieldCrossFieldEx(const Op1 & a, const Op2 & b) : _op1(a), _op2(b)
         {
             static_assert(
-                std::is_same_v<T, Vector3>,
-                "Field<...>.cross(...) is only available on Field<Vector3>");
+                std::is_same_v<T, Vector3>, "FMATH USAGE ERROR: FieldCrossFieldEx can "
+                                            "only be used with Vector3 as value type.");
             assert(_op1.size() == _op2.size());
         }
 
@@ -170,8 +170,8 @@ namespace FMath::detail
         VectorCrossFieldEx(const Op1 & a, const Vector3 & b) : _op1(a), _vec(b)
         {
             static_assert(
-                std::is_same_v<T, Vector3>,
-                "Field<...>.cross(...) is only available on Field<Vector3>");
+                std::is_same_v<T, Vector3>, "FMATH USAGE ERROR: VectorCrossFieldEx can "
+                                            "only be used with Vector3 as value type.");
         }
 
         auto size() const

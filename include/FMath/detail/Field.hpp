@@ -30,7 +30,7 @@ namespace FMath::detail
         Field(const std::size_t n) : _container(n) {}
 
         // Field with initial size and value
-        Field(const std::size_t n, const T & initialValue) : _container(n, initialValue) {}
+        Field(const std::size_t n, const T & value) : _container(n, value) {}
 
         // Field via initializer list
         Field(const std::initializer_list<T> & list) : _container(list) {}
@@ -100,8 +100,7 @@ namespace FMath::detail
             static_assert(
                 std::is_same_v<Container, std::vector<T>>,
                 "FMATH USAGE ERROR: data() is only available for evaluated "
-                "Fields, not "
-                "Expressions");
+                "Fields, not Expressions");
             if constexpr (std::is_same_v<Container, std::vector<T>>)
             {
                 return _container.data();
@@ -157,6 +156,11 @@ namespace FMath::detail
         template<typename Lambda>
         void apply_lambda(const Lambda & lambda)
         {
+            static_assert(
+                std::is_convertible<
+                    Lambda, std::function<void(std::size_t, const T &)>>::value,
+                "FMATH USAGE ERROR: you cannot use apply_lambda with a type that "
+                "is not convertible to std::function<void(std::size_t, const T &)>.");
             this->assign(Field<T, FieldLambda<T, Container, Lambda>>(
                 FieldLambda<T, Container, Lambda>(this->contents(), lambda)));
         }
@@ -166,6 +170,11 @@ namespace FMath::detail
         template<typename Lambda>
         auto applied_lambda(const Lambda & lambda)
         {
+            static_assert(
+                std::is_convertible<
+                    Lambda, std::function<void(std::size_t, const T &)>>::value,
+                "FMATH USAGE ERROR: you cannot use applied_lambda with a type that "
+                "is not convertible to std::function<void(std::size_t, const T &)>.");
             return Field<T, FieldLambda<T, Container, Lambda>>(
                 FieldLambda<T, Container, Lambda>(this->contents(), lambda));
         }

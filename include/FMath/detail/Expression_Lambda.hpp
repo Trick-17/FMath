@@ -17,9 +17,10 @@ namespace FMath::detail
         FieldLambda(const Op1 & a, const Lambda & l) : _op1(a), _lambda(l)
         {
             static_assert(
-                std::is_convertible<Lambda, std::function<void(std::size_t, const T &)>>::value,
-                "FMATH USAGE ERROR: you cannot use lambda expressions with a type that "
-                "is not convertible to std::function<void(std::size_t, T &)>.");
+                std::is_convertible<
+                    Lambda, std::function<void(std::size_t, const T &)>>::value,
+                "FMATH USAGE ERROR: you cannot use FieldLambda expressions with a type "
+                "that's not convertible to std::function<void(std::size_t, const T &)>.");
         }
 
         auto size() const
