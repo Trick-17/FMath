@@ -3,4 +3,9 @@
 #include <FMath/detail/FieldAssign.hpp>
 #include <FMath/detail/FieldReductions.hpp>
 #include <FMath/detail/Operators.hpp>
-#include <FMath/detail/Convenience.hpp>
+
+namespace FMath
+{
+    template<typename T>
+    using Field = FMath::detail::Field<T>;
+}

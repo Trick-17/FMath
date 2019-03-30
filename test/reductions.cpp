@@ -2,8 +2,7 @@
 
 #include <FMath/Core>
 
-using FMath::ScalarField;
-using FMath::VectorField;
+using FMath::Field;
 using FMath::scalar;
 using FMath::Vector3;
 
@@ -11,8 +10,8 @@ TEST_CASE( "Reductions", "[Reductions]" )
 {
     int N = 200;
 
-    ScalarField sf(N, 3);
-    VectorField vf(N, {0,0,1});
+    Field<scalar>  sf(N, 3);
+    Field<Vector3> vf(N, {0,0,1});
 
     SECTION("Sum and Mean")
     {

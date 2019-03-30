@@ -59,14 +59,14 @@ project( ${META_PROJECT_NAME} VERSION ${META_VERSION} )
 
 
 # ######### CUDA decisions ##############################################
-# if ( FMATH_USE_CUDA )
+# if( FMATH_USE_CUDA )
 #     find_package( CUDA REQUIRED )
 #     add_definitions( -DUSE_CUDA )
-#   # set (CUDA_PROPAGATE_HOST_FLAGS ON)
+#   # set( CUDA_PROPAGATE_HOST_FLAGS ON )
 #   # --std=c++17 flag may be necessary, but it is propagated from global flags...
 #   # if it appears twice, for some reason the compilation breaks
 #     set( CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -arch=sm_60 --expt-relaxed-constexpr" )
-# endif()
+# endif( )
 # #######################################################################
 
 
@@ -163,7 +163,6 @@ include_directories( ${FMATH_INCLUDE_DIRS} )
 set( HEADER_FMATH_ROOT
      ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/Core )
 set( HEADER_FMATH_DETAIL
-     ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Convenience.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Field.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/FieldAssign.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/FieldReductions.hpp
@@ -173,6 +172,7 @@ set( HEADER_FMATH_DETAIL
      ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Expression_Function.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Expression_SubSet.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Expression_Slice.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Expression_Lambda.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/detail/Using.hpp )
 #######################################################################
 

@@ -3,17 +3,16 @@
 #include <FMath/Core>
 
 using FMath::Field;
-using FMath::ScalarField;
-using FMath::VectorField;
 using FMath::scalar;
+using FMath::Vector3;
 using FMath::VectorX;
 
 TEST_CASE( "Transform", "[Transform]" )
 {
     int N = 200;
 
-    ScalarField sf(N);
-    VectorField vf(N);
+    Field<scalar> sf(N);
+    Field<Vector3> vf(N);
 
     // Copy a scalar field to a new N-dimensional vector
     VectorX vec1 = sf.asRef<VectorX>();

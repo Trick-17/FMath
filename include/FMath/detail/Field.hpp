@@ -24,6 +24,8 @@ namespace FMath::detail
         void assign(const T & value);
 
       public:
+        using value_type = T;
+
         ///////////// Constructors //////////////////////////////////////////////////////
 
         // Field with initial size
@@ -161,8 +163,13 @@ namespace FMath::detail
                     Lambda, std::function<void(std::size_t, const T &)>>::value,
                 "FMATH USAGE ERROR: you cannot use apply_lambda with a type that "
                 "is not convertible to std::function<void(std::size_t, const T &)>.");
-            this->assign(Field<T, FieldLambda<T, Container, Lambda>>(
-                FieldLambda<T, Container, Lambda>(this->contents(), lambda)));
+            if constexpr (
+                std::is_convertible<
+                    Lambda, std::function<void(std::size_t, const T &)>>::value)
+            {
+                this->assign(Field<T, FieldLambda<T, Container, Lambda>>(
+                    FieldLambda<T, Container, Lambda>(this->contents(), lambda)));
+            }
         }
 
         // Applies a given lambda to every entry of the Field.
@@ -175,8 +182,13 @@ namespace FMath::detail
                     Lambda, std::function<void(std::size_t, const T &)>>::value,
                 "FMATH USAGE ERROR: you cannot use applied_lambda with a type that "
                 "is not convertible to std::function<void(std::size_t, const T &)>.");
-            return Field<T, FieldLambda<T, Container, Lambda>>(
-                FieldLambda<T, Container, Lambda>(this->contents(), lambda));
+            if constexpr (
+                std::is_convertible<
+                    Lambda, std::function<void(std::size_t, const T &)>>::value)
+            {
+                return Field<T, FieldLambda<T, Container, Lambda>>(
+                    FieldLambda<T, Container, Lambda>(this->contents(), lambda));
+            }
         }
 
         ///////////// Reductions ////////////////////////////////////////////////////////
