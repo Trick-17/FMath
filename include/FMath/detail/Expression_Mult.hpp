@@ -8,11 +8,11 @@ namespace FMath::detail
     template<typename T, typename Op1, typename Op2>
     class FieldFieldMultiplication
     {
-        Op1 const & _op1;
-        Op2 const & _op2;
+        const Op1 & _op1;
+        const Op2 & _op2;
 
       public:
-        FieldFieldMultiplication(Op1 const & a, Op2 const & b) : _op1(a), _op2(b)
+        FieldFieldMultiplication(const Op1 & a, const Op2 & b) : _op1(a), _op2(b)
         {
             assert(_op1.size() == _op2.size());
         }
@@ -32,8 +32,8 @@ namespace FMath::detail
     template<typename T, typename Op1, typename Op2>
     class EntityFieldMultiplication
     {
-        Op1 const & _ent;
-        Op2 const & _op2;
+        const Op1 & _ent;
+        const Op2 & _op2;
 
       public:
         EntityFieldMultiplication(const Op1 & ent, const Op2 & a) : _ent(ent), _op2(a) {}

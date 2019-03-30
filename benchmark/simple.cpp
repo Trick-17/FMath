@@ -7,7 +7,7 @@
 using FMath::Field;
 using FMath::scalar;
 
-static const int N = 100'000;
+static const int N = 1'000'000;
 
 NONIUS_BENCHMARK("Basic implementation", []{
     Field<scalar> sf1(N), sf2(N);
@@ -21,8 +21,7 @@ NONIUS_BENCHMARK("Basic implementation", []{
 
 NONIUS_BENCHMARK("Multiple assignments", []{
     Field<scalar> sf1(N), sf2(N);
-    sf1 = sf1*sf2;
-    sf1 = sf1 + sf2;
+    sf1 = sf1*sf2 + sf2;
     scalar dot = sf1.sum();
     return dot;
 })

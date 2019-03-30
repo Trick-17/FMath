@@ -8,14 +8,34 @@ using FMath::Field;
 using FMath::scalar;
 using FMath::Vector3;
 
-static const int N = 1'000'000;
+static const int N = 100'000;
 
-NONIUS_BENCHMARK("Basic implementation", []{
-    std::vector<int> relative_indices({ -1, +1 });
-    Field<Vector3> orientations(N, Vector3{ 0, 0, 1 });
-    Field<Vector3> intermediate(N, Vector3{ 0, 0, 0 });
-    Field<scalar> res(N, 0.0);
+std::vector<int> relative_indices({ -1, +1 });
+Field<Vector3> orientations(N, Vector3{ 0, 0, 1 });
+Field<Vector3> intermediate(N, Vector3{ 0, 0, 0 });
+Field<scalar> sf(N, 0.0);
+Field<scalar> res(N, 0.0);
 
+//////////////////////////////////////////////////////////////////////
+
+auto lambda_large = [&](const std::size_t idx, const Vector3 & val) -> Vector3
+{
+    Vector3 tmp = val;
+    if( idx > 0 && idx < orientations.size() - 1 )
+    {
+        for( auto & rel : relative_indices )
+        {
+            tmp += orientations[idx + rel];
+        }
+    }
+    else if( idx == 0 )
+        tmp += orientations[idx + 1];
+    else if( idx == orientations.size() - 1 )
+        tmp += orientations[idx - 1];
+    return tmp;
+};
+
+NONIUS_BENCHMARK("Large basic", []{
     for( int idx=0; idx<N; ++idx )
     {
         if( idx > 0 && idx < orientations.size() - 1 )
@@ -36,56 +56,76 @@ NONIUS_BENCHMARK("Basic implementation", []{
     return res;
 })
 
-NONIUS_BENCHMARK("Lambda implementation", []{
-    std::vector<int> relative_indices({ -1, +1 });
-    Field<Vector3> orientations(N, Vector3{ 0, 0, 1 });
-    Field<Vector3> intermediate(N, Vector3{ 0, 0, 0 });
-    Field<scalar> res(N, 0.0);
-
-    auto lambda = [&](std::size_t idx, Vector3 & val) {
-        if( idx > 0 && idx < orientations.size() - 1 )
-        {
-            for( auto & rel : relative_indices )
-            {
-                val += orientations[idx + rel];
-            }
-        }
-        else if( idx == 0 )
-            val += orientations[idx + 1];
-        else if( idx == orientations.size() - 1 )
-            val += orientations[idx - 1];
-    };
-
-    res = orientations.dot(intermediate.applied_lambda(lambda));
+NONIUS_BENCHMARK("Large lambda", []{
+    res = orientations.dot(intermediate.applied_lambda(lambda_large));
     return res;
 })
 
-
-NONIUS_BENCHMARK("Mixed implementation", []{
-    std::vector<int> relative_indices({ -1, +1 });
-    Field<Vector3> orientations(N, Vector3{ 0, 0, 1 });
-    Field<Vector3> intermediate(N, Vector3{ 0, 0, 0 });
-    Field<scalar> res(N, 0.0);
-
-    auto lambda = [&](std::size_t idx, Vector3 & val) {
-        if( idx > 0 && idx < orientations.size() - 1 )
-        {
-            for( auto & rel : relative_indices )
-            {
-                val += orientations[idx + rel];
-            }
-        }
-        else if( idx == 0 )
-            val += orientations[idx + 1];
-        else if( idx == orientations.size() - 1 )
-            val += orientations[idx - 1];
-    };
-
+NONIUS_BENCHMARK("Large mixed", []{
     for( int idx=0; idx<N; ++idx )
     {
-        lambda(idx, intermediate[idx]);
+        lambda_large(idx, intermediate[idx]);
         res[idx] = orientations[idx].dot(intermediate[idx]);
     }
-
     return res;
+})
+
+//////////////////////////////////////////////////////////////////////
+
+auto lambda_medium = [&](const std::size_t idx, const Vector3 & val) -> Vector3
+{
+    Vector3 tmp = val;
+    if( idx > 0 && idx < intermediate.size() )
+    {
+        tmp += intermediate[idx-1];
+        tmp += intermediate[idx+1];
+    }
+    return tmp;
+};
+
+NONIUS_BENCHMARK("Medium basic", []{
+    for( int idx=0; idx<N; ++idx )
+    {
+        if( idx > 0 && idx < intermediate.size() )
+        {
+            orientations[idx] += intermediate[idx-1];
+            orientations[idx] += intermediate[idx+1];
+        }
+    }
+})
+
+NONIUS_BENCHMARK("Medium lambda", []{
+    orientations.apply_lambda(lambda_medium);
+})
+
+NONIUS_BENCHMARK("Medium mixed", []{
+    for( int idx=0; idx<N; ++idx )
+    {
+        orientations[idx] = lambda_medium(idx, intermediate[idx]);
+    }
+})
+
+//////////////////////////////////////////////////////////////////////
+
+NONIUS_BENCHMARK("Minimal basic", []{
+    for( int idx=0; idx<N; ++idx )
+    {
+        res[idx] = sf[idx];
+    }
+})
+
+auto lambda_minimal = [&](const std::size_t idx, const scalar & val) -> scalar
+{
+    return sf[idx];
+};
+
+NONIUS_BENCHMARK("Minimal lambda", []{
+    res.apply_lambda(lambda_minimal);
+})
+
+NONIUS_BENCHMARK("Minimal mixed", []{
+    for( int idx=0; idx<N; ++idx )
+    {
+        res[idx] = lambda_minimal(idx, sf[idx]);
+    }
 })

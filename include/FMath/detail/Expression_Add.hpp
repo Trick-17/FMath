@@ -8,11 +8,11 @@ namespace FMath::detail
     template<typename T, typename Op1, typename Op2>
     class FieldFieldAdd
     {
-        Op1 const & _op1;
-        Op2 const & _op2;
+        const Op1 & _op1;
+        const Op2 & _op2;
 
       public:
-        FieldFieldAdd(Op1 const & a, Op2 const & b) : _op1(a), _op2(b)
+        FieldFieldAdd(const Op1 & a, const Op2 & b) : _op1(a), _op2(b)
         {
             assert(_op1.size() == _op2.size());
         }
@@ -32,11 +32,11 @@ namespace FMath::detail
     template<typename T, typename Op1, typename Op2>
     class EntityFieldAdd
     {
-        Op1 const & _ent;
-        Op2 const & _op2;
+        const Op1 & _ent;
+        const Op2 & _op2;
 
       public:
-        EntityFieldAdd(Op1 const & ent, Op2 const & op2) : _ent(ent), _op2(op2) {}
+        EntityFieldAdd(const Op1 & ent, const Op2 & op2) : _ent(ent), _op2(op2) {}
 
         auto size() const
         {
