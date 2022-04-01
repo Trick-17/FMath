@@ -1,0 +1,135 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+
+  test:
+    runs-on: ${{ matrix.os }}
+    name: test ${{ matrix.name-suffix }} (${{ matrix.os }}, ${{ matrix.build-type }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, ubuntu-18.04, macos-11, macos-10.15, windows-2019]
+        build-type: [Release, Debug]
+    env:
+      BUILD_TYPE: ${{ matrix.build-type }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: 📁 Create build folder
+      run: cmake -E make_directory ${{runner.workspace}}/build
+
+    - name: ⚙ Configure
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DFMATH_TEST_COVERAGE=OFF
+
+    - name: 🛠 Build
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: cmake --build . --config $BUILD_TYPE
+
+    - name: 🧪 Test
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: ctest -C $BUILD_TYPE
+
+    - name: 📦 Conan package
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install conan
+        CONANCHANNEL=$TRAVIS_BRANCH
+        if [ "$TRAVIS_BRANCH" == "master" ]; then CONANCHANNEL=stable; fi
+        if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then CONAN=false; fi
+        conan export . $BINTRAYUSER/$CONANCHANNEL
+        PACKAGENAME=$(conan search | sed -n 3p)
+        conan remote add fmath https://api.bintray.com/conan/trick-17/fmath
+        conan user -p $BINTRAYAPIKEY -r fmath $BINTRAYUSER
+        conan upload --all $PACKAGENAME -r fmath
+
+
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: 📚 Install necessary packages
+        run: |
+          sudo apt update
+          sudo apt install -y cmake lcov
+          python -m pip install --upgrade pip
+          python -m pip install numpy coverage 'coveralls<3' wheel
+
+      - name: 📁 Create build folder
+        run: cmake -E make_directory ${{runner.workspace}}/build
+
+      - name: ⚙ Configure
+        working-directory: ${{runner.workspace}}/build
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=Debug -DFMATH_TEST_COVERAGE=ON
+
+      - name: 🛠 Build
+        working-directory: ${{runner.workspace}}/build
+        run: cmake --build . --config Debug -j 2
+
+      - name: 🧪 Coverage test
+        working-directory: ${{runner.workspace}}/build
+        run: |
+          lcov -c -i --no-external --directory . --base-directory $GITHUB_WORKSPACE -o baseline.info
+          ctest
+          lcov -c --no-external --directory . --base-directory $GITHUB_WORKSPACE -o after_test.info
+          lcov -a baseline.info -a after_test.info -o total_test.info
+          lcov -r total_test.info \*thirdparty\* \*/test/\* -o coverage.info
+
+      - name: Upload C++ coverage
+        uses: codecov/codecov-action@v1
+        with:
+          files: ${{runner.workspace}}/build/coverage.info
+
+
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    env:
+      SOURCES: "find include/FMath/ include/FMath/detail/ -iname *.hpp -o -iname *.cpp"
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: 📚 Install required system packages
+      run: |
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+        sudo add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main"
+        sudo apt update
+        sudo apt install xorg-dev libglu1-mesa-dev libgtk-3-dev clang-format-13 clang-tidy-13
+
+    - name: 📁 Create build folder
+      run: cmake -E make_directory ${{runner.workspace}}/build
+
+    - name: ⚙ Configure
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: cmake $GITHUB_WORKSPACE
+
+    - name: 🧪 clang-format linting
+      if: always()
+      shell: bash
+      run: |
+        clang-format-13 --version
+        OUTPUT=$($SOURCES | xargs clang-format-13 -n 2>&1)
+        if [[ $OUTPUT ]]; then
+          echo "$OUTPUT"
+          exit 1
+        fi
+
+    - name: 🧪 clang-tidy linting
+      if: always()
+      shell: bash
+      run: |
+        clang-tidy-13 --version
+        $SOURCES | xargs clang-tidy-13 -p ${{runner.workspace}}/build 2>&1
