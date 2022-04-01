@@ -18,7 +18,7 @@ Field<scalar> res(N, 0.0);
 
 //////////////////////////////////////////////////////////////////////
 
-auto lambda_large = [&](const std::size_t idx, const Vector3 & val) -> Vector3
+auto lambda_large = [](const std::size_t idx, const Vector3 & val) -> Vector3
 {
     Vector3 tmp = val;
     if( idx > 0 && idx < orientations.size() - 1 )
@@ -72,7 +72,7 @@ NONIUS_BENCHMARK("Large mixed", []{
 
 //////////////////////////////////////////////////////////////////////
 
-auto lambda_medium = [&](const std::size_t idx, const Vector3 & val) -> Vector3
+auto lambda_medium = [](const std::size_t idx, const Vector3 & val) -> Vector3
 {
     Vector3 tmp = val;
     if( idx > 0 && idx < intermediate.size() )
@@ -114,7 +114,7 @@ NONIUS_BENCHMARK("Minimal basic", []{
     }
 })
 
-auto lambda_minimal = [&](const std::size_t idx, const scalar & val) -> scalar
+auto lambda_minimal = [](const std::size_t idx, const scalar & val) -> scalar
 {
     return sf[idx];
 };

@@ -29,7 +29,7 @@ TEST_CASE( "Reductions", "[Reductions]" )
 
         // Check
         INFO( "vf_sum: " + std::to_string(vf_sum[0]) + " " + std::to_string(vf_sum[1]) + " " + std::to_string(vf_sum[2]) );
-        REQUIRE( vf_sum.isApprox( Vector3{0, 0, N} ) );
+        REQUIRE( vf_sum.isApprox( Vector3{0, 0, double(N)} ) );
         INFO( "vf_mean: " + std::to_string(vf_mean[0]) + " " + std::to_string(vf_mean[1]) + " " + std::to_string(vf_mean[2]) );
         REQUIRE( vf_mean.isApprox( Vector3{0, 0, 1} ) );
     }
