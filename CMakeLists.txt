@@ -2,7 +2,7 @@ MESSAGE( STATUS ">> ------------------------------------------------------------
 MESSAGE( STATUS ">> ----------------------- FMath -------------------------------------- <<" )
 
 
-######### CMake Version ###############################################
+######### CMake version ###############################################
 cmake_minimum_required( VERSION 3.10 FATAL_ERROR )
 ### We need at least C++17
 set( CMAKE_CXX_STANDARD 17 )
@@ -96,7 +96,7 @@ SET(CMAKE_CXX_FLAGS_DEBUG          "${CMAKE_CXX_FLAGS_DEBUG}          -DEIGEN_FA
 
 
 ######## Compiler-specific flags #####################################
-### GNU Compiler Collection - gcc
+### GNU compiler collection - gcc
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" )
     ### Require at least gcc 7.0
     if( CMAKE_CXX_COMPILER_VERSION VERSION_LESS 7 )
@@ -125,7 +125,7 @@ elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
     set( FMATH_LINK_FLAGS    "" )
     set( FMATH_BENCH_COMPILE_FLAGS "" )
 
-### Intel Compiler - icc
+### Intel compiler - icc
 elseif( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel" )
     ### Compile and Link Flags
     set( FMATH_COMPILE_FLAGS "-Wall -Wextra -Wpedantic" )
@@ -137,7 +137,7 @@ message( STATUS "FMath Link Flags:    ${FMATH_LINK_FLAGS}" )
 ######################################################################
 
 
-######### Coverage Flags #############################################
+######### Coverage flags #############################################
 if( FMATH_TEST_COVERAGE )
     set( FMATH_FLAGS_COVERAGE
         ${CMAKE_CXX_FLAGS_DEBUG}
@@ -159,7 +159,7 @@ include_directories( ${FMATH_INCLUDE_DIRS} )
 #######################################################################
 
 
-######### Declare File groups #########################################
+######### Declare file groups #########################################
 set( HEADER_FMATH_ROOT
      ${CMAKE_CURRENT_SOURCE_DIR}/include/FMath/Core )
 set( HEADER_FMATH_DETAIL
@@ -197,13 +197,16 @@ macro( add_framework_test testName )
     # Executable
     add_executable( test_${testName} test/main.cpp test/${testName}.cpp )
     # Properties
-    set_property( TARGET test_${testName} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${TEST_RUNTIME_OUTPUT_DIRECTORY} )
-    set_property( TARGET test_${testName} PROPERTY CXX_STANDARD 17 )
-    set_property( TARGET test_${testName} PROPERTY CXX_STANDARD_REQUIRED ON )
-    set_property( TARGET test_${testName} PROPERTY CXX_EXTENSIONS OFF )
-    set_property( TARGET test_${testName} PROPERTY COMPILE_FLAGS "${FMATH_COMPILE_FLAGS} ${FMATH_FLAGS_COVERAGE}" )
-    set_property( TARGET test_${testName} PROPERTY LINK_FLAGS    "${FMATH_LINK_FLAGS}    ${FMATH_FLAGS_COVERAGE}" )
-    # Include Directories
+    set_target_properties(
+        test_${testName} PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY ${TEST_RUNTIME_OUTPUT_DIRECTORY}
+            CXX_STANDARD 17
+            CXX_STANDARD_REQUIRED ON
+            CXX_EXTENSIONS OFF
+            COMPILE_FLAGS "${FMATH_COMPILE_FLAGS} ${FMATH_FLAGS_COVERAGE}"
+            LINK_FLAGS    "${FMATH_LINK_FLAGS}    ${FMATH_FLAGS_COVERAGE}"
+    )
+    # Include directories
     target_include_directories( test_${testName} PRIVATE ${PROJECT_SOURCE_DIR}/test )
     # Add the test
     add_test( NAME              test_${testName}
@@ -229,15 +232,18 @@ set( BENCH_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR} )
 ### Benchmark creation macro
 macro( add_framework_bench benchName )
     # Executable
-    add_executable( bench_${benchName} benchmark/${benchName}.cpp )#WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} )
+    add_executable( bench_${benchName} benchmark/${benchName}.cpp ) # WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} )
     # Properties
-    set_property( TARGET bench_${benchName} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${BENCH_RUNTIME_OUTPUT_DIRECTORY} )
-    set_property( TARGET bench_${benchName} PROPERTY CXX_STANDARD 17 )
-    set_property( TARGET bench_${benchName} PROPERTY CXX_STANDARD_REQUIRED ON )
-    set_property( TARGET bench_${benchName} PROPERTY CXX_EXTENSIONS OFF )
-    set_property( TARGET bench_${benchName} PROPERTY COMPILE_FLAGS "${FMATH_COMPILE_FLAGS} ${FMATH_BENCH_COMPILE_FLAGS}" )
-    set_property( TARGET bench_${benchName} PROPERTY LINK_FLAGS    "${FMATH_LINK_FLAGS}" )
-    # Include Directories
+    set_target_properties(
+        bench_${benchName} PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY ${BENCH_RUNTIME_OUTPUT_DIRECTORY}
+            CXX_STANDARD 17
+            CXX_STANDARD_REQUIRED ON
+            CXX_EXTENSIONS OFF
+            COMPILE_FLAGS "${FMATH_COMPILE_FLAGS} ${FMATH_BENCH_COMPILE_FLAGS}"
+            LINK_FLAGS    "${FMATH_LINK_FLAGS}"
+    )
+    # Include directories
     target_include_directories( bench_${benchName} PRIVATE ${PROJECT_SOURCE_DIR}/benchmark )
     # Linking
     find_package( Threads REQUIRED )
