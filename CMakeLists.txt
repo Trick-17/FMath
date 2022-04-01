@@ -239,6 +239,9 @@ macro( add_framework_bench benchName )
     set_property( TARGET bench_${benchName} PROPERTY LINK_FLAGS    "${FMATH_LINK_FLAGS}" )
     # Include Directories
     target_include_directories( bench_${benchName} PRIVATE ${PROJECT_SOURCE_DIR}/benchmark )
+    # Linking
+    find_package( Threads REQUIRED )
+    target_link_libraries( bench_${benchName} PRIVATE Threads::Threads )
     # Add the bench
     # add_executable( NAME        ${benchName} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} )
 endmacro( add_framework_bench benchName )
